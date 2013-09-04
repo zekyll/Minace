@@ -63,6 +63,8 @@
       </item>
       <item path="Move.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="MoveList.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="MoveMasks.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Piece.h" ex="false" tool="3" flavor2="0">
@@ -116,6 +118,8 @@
       <item path="Mask.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Move.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MoveList.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="MoveMasks.h" ex="false" tool="3" flavor2="0">
       </item>

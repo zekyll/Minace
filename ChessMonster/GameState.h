@@ -81,7 +81,7 @@ public:
 
 	const BitBoard& board() const
 	{
-		return board;
+		return mBoard;
 	}
 
 	unsigned ply() const
