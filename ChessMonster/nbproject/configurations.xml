@@ -21,6 +21,8 @@
       <itemPath>Piece.h</itemPath>
       <itemPath>Player.h</itemPath>
       <itemPath>Sqr.h</itemPath>
+      <itemPath>StateInfo.h</itemPath>
+      <itemPath>TranspositionTable.h</itemPath>
       <itemPath>Zobrist.h</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>

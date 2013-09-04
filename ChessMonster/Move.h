@@ -15,6 +15,17 @@ private:
 	uint32_t mValue;
 public:
 
+	constexpr Move()
+	: mValue(0)
+	{
+	}
+
+	constexpr Move(const Sqr fromSqr, const Sqr toSqr, const Piece pieceType,
+			const Piece capturedType, const Piece newType)
+	: mValue(fromSqr | toSqr << 8 | pieceType << 16 | (capturedType + 1) << 20 | newType << 24)
+	{
+	}
+
 	Move(const std::string& s)
 	{
 		//TODO regex "[KQRBN]?[a-h][1-8](-|x[KQRBN]?)[a-h][1-8][QRBN]?"
@@ -44,12 +55,6 @@ public:
 		}
 
 		*this = Move(fromSqr, toSqr, pieceType, capturedType, newType);
-	}
-
-	constexpr Move(const Sqr fromSqr, const Sqr toSqr, const Piece pieceType,
-			const Piece capturedType, const Piece newType)
-	: mValue(fromSqr | toSqr << 8 | pieceType << 16 | (capturedType + 1) << 20 | newType << 24)
-	{
 	}
 
 	constexpr Sqr fromSqr() const
