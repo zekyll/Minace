@@ -20,13 +20,15 @@ private:
 	std::vector<int> mScores;
 
 	Player mPlayer;
+public:
 
 	Evaluator(size_t maxDepth)
 	: mPly(0), mScores(maxDepth + 1), mPlayer(Player::NONE)
 	{
+		;
 	}
 
-	void reset(GameState state)
+	void reset(const GameState& state)
 	{
 		mPly = 0;
 		mScores[mPly] = 0;
@@ -60,7 +62,7 @@ private:
 	{
 		assert(mPlayer);
 		assert(mPly < mScores.size());
-		
+
 		int score = mScores[mPly];
 
 		Sqr fromSqr = move.fromSqr();
@@ -95,6 +97,5 @@ private:
 		mPlayer = ~mPlayer;
 	}
 };
-
 
 }
