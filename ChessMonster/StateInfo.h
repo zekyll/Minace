@@ -7,11 +7,14 @@ namespace cm {
 struct StateInfo
 {
 public:
-	static constexpr unsigned NODE_TYPE_EXACT = 0;
 
-	static constexpr unsigned NODE_TYPE_LOWER_BOUND = 1;
-
-	static constexpr unsigned NODE_TYPE_UPPER_BOUND = 2;
+	enum class NodeType : unsigned
+	{
+		NONE = 0,
+		EXACT = 1,
+		LOWER_BOUND = 2,
+		UPPER_BOUND = 3,
+	};
 
 	const uint64_t id;
 
@@ -21,7 +24,7 @@ public:
 
 	Move bestMove;
 
-	int nodeType;
+	NodeType nodeType;
 
 	StateInfo(uint64_t id)
 	: id(id)
