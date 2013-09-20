@@ -56,6 +56,9 @@ private:
 typedef Scores_t<int_least32_t> Scores;
 
 template<typename TScore>
+constexpr TScore Scores_t<TScore>::PIECE_VALUES[Piece::COUNT];
+
+template<typename TScore>
 TScore Scores_t<TScore>::POSITIONAL_PIECE_VALUES[Player::COUNT][Piece::COUNT][Sqr::COUNT]{
 	{
 		// King
