@@ -30,6 +30,8 @@ private:
 
 	std::array<unsigned, PRIORITIES> moveCounts;
 
+public:
+
 	void populate(const GameState& state, bool excludeQuietMoves)
 	{
 		Player player = state.activePlayer();
@@ -52,6 +54,23 @@ private:
 		pieces = state.board()(player, Piece::PAWN) & ~MoveMasks::PROMOTABLE[player];
 		addMoves(state, Piece::PAWN, pieces, Piece::PAWN, excludeQuietMoves);
 	}
+
+	unsigned getCount(int priority) const
+	{
+		return moveCounts[priority];
+	}
+
+	Move getMove(unsigned priority, unsigned idx) const
+	{
+		return moves[priority][idx];
+	}
+
+	void clear()
+	{
+		moveCounts.fill(0);
+	}
+
+private:
 
 	void addMoves(const GameState& state, Piece pieceType, Mask pieces, Piece newType,
 			bool excludeQuietMoves)
@@ -88,21 +107,6 @@ private:
 	{
 		Sqr enPassantSqr = state.enPassantSqr();
 		return enPassantSqr ? enPassantSqr : Mask();
-	}
-
-	unsigned getCount(int priority) const
-	{
-		return moveCounts[priority];
-	}
-
-	Move getMove(unsigned priority, unsigned idx) const
-	{
-		return moves[priority][idx];
-	}
-
-	void clear()
-	{
-		moveCounts.fill(0);
 	}
 
 	void add(Piece pieceType, Sqr fromSqr, Sqr toSqr, Piece capturedType, Piece newType)
