@@ -14,6 +14,7 @@
                    projectFiles="true">
       <itemPath>BitBoard.h</itemPath>
       <itemPath>Evaluator.h</itemPath>
+      <itemPath>GamePlayer.h</itemPath>
       <itemPath>GameState.h</itemPath>
       <itemPath>Intrinsics.h</itemPath>
       <itemPath>Mask.h</itemPath>
@@ -60,6 +61,8 @@
       <item path="BitBoard.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Evaluator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GamePlayer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="GameState.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -123,6 +126,8 @@
       <item path="BitBoard.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Evaluator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GamePlayer.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="GameState.h" ex="false" tool="3" flavor2="0">
       </item>
