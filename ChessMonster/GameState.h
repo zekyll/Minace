@@ -150,47 +150,11 @@ public:
 		--mPly;
 	}
 
-//	std::vector<Move> getLegalMoves()
-//	{
-//		std::vector<Move> moves;
-//		moves.reserve(256);
-//		for (Sqr fromSqr : mBoard(mPlayer)) {
-//			std::vector<Move> sqrMoves = getLegalMoves(fromSqr);
-//			moves.insert(moves.end(), sqrMoves.begin(), sqrMoves.end());
-//		}
-//		return moves;
-//	}
 	void getLegalMoves(std::vector<Move>& moves)
 	{
 		for (Sqr fromSqr : mBoard(mPlayer))
 			getLegalMoves(fromSqr, moves);
 	}
-
-	
-//	std::vector<Move> getLegalMoves(Sqr fromSqr)
-//	{
-//		std::vector<Move> moves;
-//		moves.reserve(27);
-//
-//		Mask movesMask = getPseudoLegalMoves(mPlayer, fromSqr);
-//
-//		for (Sqr toSqr : movesMask) {
-//			Piece pieceType = mBoard.getPieceType(mPlayer, fromSqr);
-//			Piece capturedType = mBoard.getPieceType(~mPlayer, toSqr);
-//			if (toSqr == mHist[mPly].enPassantSqr && pieceType == Piece::PAWN)
-//				capturedType = Piece::PAWN;
-//			Move move(fromSqr, toSqr, pieceType, capturedType, pieceType);
-//			if (!isLegalMove(move))
-//				continue;
-//			if (pieceType == Piece::PAWN && toSqr.row() == mPlayer * 7) {
-//				for (int promoType = Piece::QUEEN; promoType <= Piece::KNIGHT; ++promoType)
-//					moves.emplace_back(fromSqr, toSqr, pieceType, capturedType, Piece(promoType));
-//			} else
-//				moves.push_back(move);
-//		}
-//
-//		return moves;
-//	}
 
 	void getLegalMoves(Sqr fromSqr, std::vector<Move>& moves)
 	{
@@ -295,22 +259,14 @@ public:
 
 	bool isCheckMate()
 	{
-		for (Sqr sqr : mBoard(mPlayer)) {
-			if (!getLegalMoves(sqr).empty())
-				return false;
-		}
-		return isKingChecked(mPlayer);
+		return !hasLegalMoves() && isKingChecked(mPlayer);
 	}
 
 	bool isStaleMate()
 	{
 		if (isRepeatedState() || mHist[mPly].halfMoveClock >= 50)
 			return true;
-		for (Sqr sqr : mBoard(mPlayer)) {
-			if (!getLegalMoves(sqr).empty())
-				return false;
-		}
-		return !isKingChecked(mPlayer);
+		return !hasLegalMoves() && !isKingChecked(mPlayer);
 	}
 
 	bool isKingChecked(Player defendingPlayer) const
@@ -350,7 +306,11 @@ public:
 
 	std::vector<uint64_t> getEarlierStates() const
 	{
-		return std::vector<uint64_t> (mHist.begin(), mHist.begin() + mPly);
+		std::vector<uint64_t> states;
+		states.reserve(mPly);
+		for (unsigned i = 0; i < mPly; ++i)
+			states.push_back(mHist[i].zobristCode);
+		return states;
 	}
 
 	void changeNextMovingPlayer()
@@ -520,6 +480,17 @@ public:
 			mHist[mPly].castlingRights |= sqr;
 			mHist[mPly].zobristCode ^= Zobrist::CASTLINGRIGHTS_RND[sqr];
 		}
+	}
+
+	bool hasLegalMoves()
+	{
+		std::vector<Move> moves;
+		for (Sqr sqr : mBoard(mPlayer)) {
+			getLegalMoves(sqr, moves);
+			if (moves.empty())
+				return true;
+		}
+		return false;
 	}
 };
 
