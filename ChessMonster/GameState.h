@@ -140,7 +140,7 @@ public:
 		if (mHist[mPly - 1].enPassantSqr)
 			mHist[mPly].zobristCode ^= Zobrist::EN_PASSANT_RND[mHist[mPly - 1].enPassantSqr];
 		mHist[mPly].enPassantSqr = Sqr::NONE;
-		mHist[mPly].castlingRights = castlingRights[mPly - 1];
+		mHist[mPly].castlingRights = mHist[mPly - 1].castlingRights;
 		changeNextMovingPlayer();
 	}
 
