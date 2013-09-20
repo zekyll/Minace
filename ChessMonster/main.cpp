@@ -1,5 +1,6 @@
 
 #include "GameState.h"
+#include "Scores.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -23,6 +24,7 @@ uint64_t perft(GameState& state, unsigned depth)
 	return count;
 }
 
+template class Scores_t<int>;
 template class MoveMasks_t<Mask>;
 template class Zobrist_t<uint64_t>;
 

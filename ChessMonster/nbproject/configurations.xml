@@ -17,9 +17,11 @@
       <itemPath>Intrinsics.h</itemPath>
       <itemPath>Mask.h</itemPath>
       <itemPath>Move.h</itemPath>
+      <itemPath>MoveList.h</itemPath>
       <itemPath>MoveMasks.h</itemPath>
       <itemPath>Piece.h</itemPath>
       <itemPath>Player.h</itemPath>
+      <itemPath>Scores.h</itemPath>
       <itemPath>Sqr.h</itemPath>
       <itemPath>StateInfo.h</itemPath>
       <itemPath>TranspositionTable.h</itemPath>
@@ -69,6 +71,8 @@
       <item path="Piece.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Player.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Scores.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -124,6 +128,8 @@
       <item path="Piece.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Player.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Scores.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
