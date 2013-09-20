@@ -1,6 +1,9 @@
 
+#include "TranspositionTable.h"
 #include "GameState.h"
+#include "MoveList.h"
 #include "Scores.h"
+#include "Evaluator.h"
 #include <cstdlib>
 #include <iostream>
 

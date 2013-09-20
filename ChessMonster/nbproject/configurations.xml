@@ -13,6 +13,7 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>BitBoard.h</itemPath>
+      <itemPath>Evaluator.h</itemPath>
       <itemPath>GameState.h</itemPath>
       <itemPath>Intrinsics.h</itemPath>
       <itemPath>Mask.h</itemPath>
@@ -55,6 +56,8 @@
         </ccTool>
       </compileType>
       <item path="BitBoard.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Evaluator.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="GameState.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -112,6 +115,8 @@
         </asmTool>
       </compileType>
       <item path="BitBoard.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Evaluator.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="GameState.h" ex="false" tool="3" flavor2="0">
       </item>
