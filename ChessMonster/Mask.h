@@ -124,6 +124,3 @@ public:
 typedef Mask_t<uint64_t> Mask;
 
 }
-
-
-

@@ -19,11 +19,13 @@ public:
 	constexpr Sqr_t()
 	: mValue(-1)
 	{
+		;
 	}
 
 	explicit constexpr Sqr_t(T value)
 	: mValue(value)
 	{
+		;
 	}
 
 	Sqr_t(const std::string& str, size_t& idx)

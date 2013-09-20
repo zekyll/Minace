@@ -15,7 +15,7 @@ public:
 	void startNode(...) { }
 
 	void endNode(...) { }
-	
+
 	SearchTreeNode getTree()
 	{
 		return SearchTreeNode(); //TODO
