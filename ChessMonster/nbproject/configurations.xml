@@ -23,9 +23,11 @@
       <itemPath>Piece.h</itemPath>
       <itemPath>Player.h</itemPath>
       <itemPath>Scores.h</itemPath>
+      <itemPath>SearchTreeNode.h</itemPath>
       <itemPath>Sqr.h</itemPath>
       <itemPath>StateInfo.h</itemPath>
       <itemPath>TranspositionTable.h</itemPath>
+      <itemPath>TreeGenerator.h</itemPath>
       <itemPath>Zobrist.h</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
@@ -77,11 +79,15 @@
       </item>
       <item path="Scores.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="SearchTreeNode.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="StateInfo.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="TranspositionTable.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TreeGenerator.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Zobrist.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -136,11 +142,15 @@
       </item>
       <item path="Scores.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="SearchTreeNode.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="StateInfo.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="TranspositionTable.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TreeGenerator.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Zobrist.h" ex="false" tool="3" flavor2="0">
       </item>
