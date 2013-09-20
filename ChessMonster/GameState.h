@@ -348,9 +348,9 @@ public:
 		return result;
 	}
 
-	std::vector<Mask> getEarlierStates()
+	std::vector<uint64_t> getEarlierStates() const
 	{
-		return std::vector<Mask > (mHist.begin(), mHist.begin() + mPly);
+		return std::vector<uint64_t> (mHist.begin(), mHist.begin() + mPly);
 	}
 
 	void changeNextMovingPlayer()
