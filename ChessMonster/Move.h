@@ -18,12 +18,14 @@ public:
 	constexpr Move()
 	: mValue(0)
 	{
+		;
 	}
 
 	constexpr Move(const Sqr fromSqr, const Sqr toSqr, const Piece pieceType,
 			const Piece capturedType, const Piece newType)
 	: mValue(fromSqr | toSqr << 8 | pieceType << 16 | (capturedType + 1) << 20 | newType << 24)
 	{
+		;
 	}
 
 	Move(const std::string& s)
@@ -90,6 +92,21 @@ public:
 	constexpr bool isCapture()
 	{
 		return mValue >> 20 & 0x7;
+	}
+
+	constexpr bool operator==(const Move& rhs) const
+	{
+		return mValue == rhs.mValue;
+	}
+
+	constexpr bool operator!=(const Move& rhs) const
+	{
+		return mValue != rhs.mValue;
+	}
+
+	explicit constexpr operator bool() const
+	{
+		return !!mValue;
 	}
 
 	std::string toStr()
