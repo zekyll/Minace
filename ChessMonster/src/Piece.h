@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Player.h"
 #include <string>
 #include <algorithm>
 #include <iterator>
@@ -20,7 +21,7 @@ public:
 	static constexpr unsigned COUNT = 6;
 
 private:
-	static std::string SYMBOLS[COUNT];
+	static std::string SYMBOLS[2][Player::COUNT][COUNT + 1];
 
 private:
 	T mValue;
@@ -30,20 +31,20 @@ public:
 	explicit constexpr Piece_t(T value)
 	: mValue(value)
 	{
+		;
 	}
 
 	Piece_t(const std::string& s)
 	{
-		mValue = std::find(std::begin(SYMBOLS), std::end(SYMBOLS), s) - std::begin(SYMBOLS);
-		for (mValue = 0; mValue < COUNT; ++mValue) {
-			if (SYMBOLS[mValue] == s)
-				break;
-		}
+		std::string(&symbols)[COUNT + 1] = SYMBOLS[0][Player::WHITE];
+		mValue = std::find(std::begin(symbols) + 1, std::end(symbols), s) - std::begin(symbols) - 1;
 	}
 
-	std::string toStr() const
+	std::string toStr(Player player = Player::WHITE, bool displayPawnAndEmpty = false) const
 	{
-		return SYMBOLS[mValue];
+		if (!player)
+			player = Player::WHITE;
+		return SYMBOLS[displayPawnAndEmpty][player][mValue + 1];
 	}
 
 	constexpr bool operator==(const Piece_t& rhs) const
@@ -68,7 +69,16 @@ public:
 };
 
 template<typename T>
-		std::string Piece_t<T>::SYMBOLS[Piece_t<T>::COUNT] = {"K", "Q", "R", "B", "N", ""};
+std::string Piece_t<T>::SYMBOLS[2][Player::COUNT][Piece_t<T>::COUNT + 1] = {
+	{
+		{"", "K", "Q", "R", "B", "N", ""},
+		{"", "k", "q", "r", "b", "n", ""}
+	},
+	{
+		{".", "K", "Q", "R", "B", "N", "P"},
+		{".", "k", "q", "r", "b", "n", "p"}
+	}
+};
 
 template<typename T>
 constexpr Piece_t<T> Piece_t<T>::NONE;
