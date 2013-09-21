@@ -8,6 +8,7 @@
 #include "MoveMasks.h"
 #include "Zobrist.h"
 #include <string>
+#include <iosfwd>
 
 namespace cm {
 
@@ -40,11 +41,13 @@ public:
 	"Ra8 Nb8 Bc8 Qd8 Ke8 Bf8 Ng8 Rh8 a7 b7 c7 d7 e7 f7 g7 h7"),
 	Player::WHITE)
 	{
+		;
 	}
 
 	GameState_t(std::string whitePieces, std::string blackPieces, Player startingPlayer)
 	: GameState_t(BitBoard(whitePieces, blackPieces), startingPlayer)
 	{
+		;
 	}
 
 	GameState_t(const BitBoard& board, Player startingPlayer)
@@ -174,8 +177,8 @@ public:
 			} else
 				moves.push_back(move);
 		}
-	}	
-	
+	}
+
 	Mask getPseudoLegalMoves(Player player, Sqr fromSqr) const
 	{
 		for (unsigned piece = 0; piece < Piece::COUNT; ++piece) {
@@ -224,8 +227,7 @@ public:
 	{
 		Mask moves = 0;
 
-		switch (piece)
-		{
+		switch (piece) {
 		case Piece::KING:
 			moves |= MoveMasks::KING_MOVES[fromSqr];
 			break;
@@ -304,6 +306,11 @@ public:
 		return result;
 	}
 
+	bool operator!=(const GameState_t& rhs) const
+	{
+		return !(*this == rhs);
+	}
+
 	std::vector<uint64_t> getEarlierStates() const
 	{
 		std::vector<uint64_t> states;
@@ -312,6 +319,14 @@ public:
 			states.push_back(mHist[i].zobristCode);
 		return states;
 	}
+
+	friend std::ostream& operator<<(std::ostream& os, const GameState_t& state)
+	{
+		os << state.mBoard;
+		return os;
+	}
+
+private:
 
 	void changeNextMovingPlayer()
 	{
