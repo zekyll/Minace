@@ -10,6 +10,7 @@
 #include <cstring>
 #include <cassert>
 #include <array>
+#include <iosfwd>
 
 namespace cm {
 
@@ -24,6 +25,7 @@ public:
 
 	BitBoard()
 	{
+		;
 	}
 
 	BitBoard(const std::string& whitePieces, const std::string& blackPieces)
@@ -87,6 +89,8 @@ public:
 
 	Piece getPieceType(Player player, Sqr sqr) const
 	{
+		assert(player);
+		assert(sqr);
 		for (unsigned piece = 0; piece < Piece::COUNT; ++piece) {
 			if ((*this)(player, Piece(piece), sqr))
 				return Piece(piece);
@@ -96,6 +100,7 @@ public:
 
 	Player getPlayer(Sqr sqr) const
 	{
+		assert(sqr);
 		for (unsigned player = 0; player < Player::COUNT; ++player) {
 			if ((*this)(Player(player), sqr))
 				return Player(player);
@@ -108,12 +113,30 @@ public:
 		if (mPlayerPieces[Player::WHITE] != rhs.mPlayerPieces[Player::WHITE]
 				|| mPlayerPieces[Player::BLACK] != rhs.mPlayerPieces[Player::BLACK])
 			return false;
-		for (unsigned i = Piece::COUNT; i-- > 0; ) {
+		for (unsigned i = Piece::COUNT; i-- > 0;) {
 			if (mPieces[i] != rhs.mPieces[i])
 				return false;
 		}
 
 		return true;
+	}
+
+	bool operator!=(const BitBoard& rhs) const
+	{
+		return !(*this == rhs);
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const BitBoard& board)
+	{
+		for (unsigned row = 0; row < 8; ++row) {
+			for (unsigned col = 0; col < 8; ++col) {
+				Player player = board.getPlayer(Sqr(row, col));
+				Piece piece = player ? board.getPieceType(player, Sqr(row, col)) : Piece::NONE;
+				os << piece.toStr(player, true);
+			}
+			os << '\n';
+		}
+		return os;
 	}
 private:
 
