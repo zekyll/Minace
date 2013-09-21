@@ -18,6 +18,7 @@
       <itemPath>GameState.h</itemPath>
       <itemPath>Intrinsics.h</itemPath>
       <itemPath>Mask.h</itemPath>
+      <itemPath>MinMaxAI.h</itemPath>
       <itemPath>Move.h</itemPath>
       <itemPath>MoveList.h</itemPath>
       <itemPath>MoveMasks.h</itemPath>
@@ -69,6 +70,8 @@
       <item path="Intrinsics.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Mask.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MinMaxAI.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Move.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -134,6 +137,8 @@
       <item path="Intrinsics.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Mask.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MinMaxAI.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="Move.h" ex="false" tool="3" flavor2="0">
       </item>

@@ -1,4 +1,5 @@
 
+#include "MinMaxAI.h"
 #include "TranspositionTable.h"
 #include "GameState.h"
 #include "MoveList.h"

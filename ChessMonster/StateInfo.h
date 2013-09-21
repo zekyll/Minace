@@ -16,20 +16,15 @@ public:
 		UPPER_BOUND = 3,
 	};
 
-	const uint64_t id;
+	uint64_t id; //TODO make const?
 
-	unsigned depth;
+	int depth;
 
 	int score;
 
 	Move bestMove;
 
 	NodeType nodeType;
-
-	StateInfo(uint64_t id)
-	: id(id)
-	{
-	}
 };
 
 }
