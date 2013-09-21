@@ -36,7 +36,7 @@ public:
 
 		Piece pieceType = Piece::PAWN;
 		if (isupper(s[i]))
-			pieceType = s.substr(i, 1);
+			pieceType = s.substr(i++, 1);
 
 		Sqr fromSqr(s, i);
 
