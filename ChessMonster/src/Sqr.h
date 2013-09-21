@@ -28,6 +28,18 @@ public:
 		;
 	}
 
+	constexpr Sqr_t(T row, T column)
+	: Sqr_t(row * 8 + column)
+	{
+		;
+	}
+
+	Sqr_t(const std::string& str)
+	{
+		mValue = str[0] - 'a';
+		mValue += ('8' - str[1]) * 8;
+	}
+
 	Sqr_t(const std::string& str, size_t& idx)
 	{
 		mValue = str[idx++] - 'a';
