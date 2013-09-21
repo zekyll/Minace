@@ -10,7 +10,7 @@ namespace ttest {
 
 // Convert macro argument to string literal
 #define TTEST_ARGTOSTR2(x) #x
-#define TTEST_ARGTOSTR(x) TA_ARGTOSTR2(x)
+#define TTEST_ARGTOSTR(x) TTEST_ARGTOSTR2(x)
 
 // Concatenates two macro arguments
 #define TTEST_CONCAT2(A,B) A##B
@@ -37,6 +37,7 @@ public:
 		return mMg.c_str();
 	}
 };
+
 /*
  * Base class for unit tests. 
  */
@@ -52,6 +53,7 @@ private:
 
 	std::vector<TestCase> mTestCases;
 protected:
+	TestBase() = default;
 
 	void addTestCase(std::function<void() > func, const char* description)
 	{
@@ -65,29 +67,31 @@ protected:
 			std::stringstream ss;
 			ss << "\"" << expr << "\", expected \"" << expected
 					<< "\", actual \"" << actual << "\"";
-			throw TestException(ss.str().c_str());
+			throw TestException(ss.str());
 		}
 	}
 
-	virtual void ttestBefore() = 0;
+	virtual void ttestBefore() { };
 public:
+	virtual ~TestBase() = default;
 
 	void run()
 	{
 		size_t nr = 0, passCount = 0;
 		for (TestCase& tc : mTestCases) {
-			std::cout << "  #" << nr + 1 << ": " << tc.description;
+			std::cout << "  #" << nr + 1 << ": " << tc.description << " ";
+			std::cout.flush();
 			try {
 				ttestBefore();
 				tc.func();
-				std::cout << "  [OK]" << std::endl;
+				std::cout << " [OK]" << std::endl;
 				++passCount;
 			} catch (std::exception& e) {
-				std::cout << "  [FAILED] (" << e.what() << ")" << std::endl;
+				std::cout << " [FAILED] (" << e.what() << ")" << std::endl;
 				//				if (abortOnFailure)
 				//					break;
 			} catch (...) {
-				std::cout << "  [FAILED]. (Unknown exception.)" << std::endl;
+				std::cout << " [FAILED]. (Unknown exception.)" << std::endl;
 				//				if (abortOnFailure)
 				//					break;
 			}
@@ -102,7 +106,7 @@ public:
 
 // Assert that EXPR equals EXPECTED.
 #define TTEST_EQUAL(EXPR, EXPECTED) \
-	testEqual(TA_ARGTOSTR(EXPR), EXPR, EXPECTED)
+	testEqual(TTEST_ARGTOSTR(EXPR), EXPR, EXPECTED)
 
 // Declares a member function to be called before each test case. Must be followed by function body.
 #define TTEST_BEFORE(DESCRIPTION) \
