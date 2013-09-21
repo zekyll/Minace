@@ -28,6 +28,12 @@ public:
 		;
 	}
 
+	Move(const char* s)
+	: Move(std::string(s))
+	{
+		;
+	}
+
 	Move(const std::string& s)
 	{
 		//TODO regex "[KQRBN]?[a-h][1-8](-|x[KQRBN]?)[a-h][1-8][QRBN]?"
