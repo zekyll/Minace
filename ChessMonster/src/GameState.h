@@ -421,8 +421,8 @@ private:
 				rookFromSqr = Sqr(8 * toSqr.row() + 7);
 				rookToSqr = Sqr(8 * toSqr.row() + 5);
 			}
-			addPiece(mPlayer, Piece::ROOK, rookFromSqr);
-			removePiece(mPlayer, Piece::ROOK, rookToSqr);
+			removePiece(mPlayer, Piece::ROOK, rookFromSqr);
+			addPiece(mPlayer, Piece::ROOK, rookToSqr);
 		}
 	}
 
