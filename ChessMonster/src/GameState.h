@@ -300,7 +300,7 @@ public:
 				&& mPlayer == rhs.mPlayer
 				&& mHist[mPly].enPassantSqr == rhs.mHist[rhs.mPly].enPassantSqr
 				&& mHist[mPly].castlingRights == rhs.mHist[rhs.mPly].castlingRights;
-		assert(!result || mHist[mPly].zobristCode == rhs.zobristCode[rhs.mPly]);
+		assert(!result || mHist[mPly].zobristCode == rhs.mHist[rhs.mPly].zobristCode);
 		return result;
 	}
 
