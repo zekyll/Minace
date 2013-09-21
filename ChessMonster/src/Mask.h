@@ -38,6 +38,7 @@ public:
 		MaskIterator(T mask)
 		: mMask(mask)
 		{
+			;
 		}
 
 		friend class Mask_t;
@@ -51,16 +52,19 @@ public:
 	constexpr Mask_t()
 	: mValue(0ULL)
 	{
+		;
 	}
 
 	constexpr Mask_t(Sqr sqr)
 	: mValue(1ULL << sqr)
 	{
+		;
 	}
 
 	constexpr Mask_t(T value)
 	: mValue(value)
 	{
+		;
 	}
 
 	constexpr bool operator==(const Mask_t& rhs) const
@@ -118,6 +122,14 @@ public:
 	explicit constexpr operator T() const
 	{
 		return mValue;
+	}
+
+	std::string toStr() const
+	{
+		std::string s = "";
+		for (Sqr sqr : * this)
+			s += sqr.toStr() + " ";
+		return s.empty() ? "" : s.substr(0, s.length() - 1);
 	}
 };
 
