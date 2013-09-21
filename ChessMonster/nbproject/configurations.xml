@@ -1,37 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <logicalFolder name="HeaderFiles"
-                   displayName="Header Files"
-                   projectFiles="true">
-    </logicalFolder>
-    <logicalFolder name="ResourceFiles"
-                   displayName="Resource Files"
-                   projectFiles="true">
-    </logicalFolder>
-    <logicalFolder name="SourceFiles"
-                   displayName="Source Files"
-                   projectFiles="true">
-      <itemPath>BitBoard.h</itemPath>
-      <itemPath>Evaluator.h</itemPath>
-      <itemPath>GamePlayer.h</itemPath>
-      <itemPath>GameState.h</itemPath>
-      <itemPath>Intrinsics.h</itemPath>
-      <itemPath>Mask.h</itemPath>
-      <itemPath>MinMaxAI.h</itemPath>
-      <itemPath>Move.h</itemPath>
-      <itemPath>MoveList.h</itemPath>
-      <itemPath>MoveMasks.h</itemPath>
-      <itemPath>Piece.h</itemPath>
-      <itemPath>Player.h</itemPath>
-      <itemPath>Scores.h</itemPath>
-      <itemPath>SearchTreeNode.h</itemPath>
-      <itemPath>Sqr.h</itemPath>
-      <itemPath>StateInfo.h</itemPath>
-      <itemPath>TranspositionTable.h</itemPath>
-      <itemPath>TreeGenerator.h</itemPath>
-      <itemPath>Zobrist.h</itemPath>
-      <itemPath>main.cpp</itemPath>
+    <logicalFolder name="src" displayName="src" projectFiles="true">
+      <itemPath>src/BitBoard.h</itemPath>
+      <itemPath>src/Evaluator.h</itemPath>
+      <itemPath>src/GamePlayer.h</itemPath>
+      <itemPath>src/GameState.h</itemPath>
+      <itemPath>src/Intrinsics.h</itemPath>
+      <itemPath>src/Mask.h</itemPath>
+      <itemPath>src/MinMaxAI.h</itemPath>
+      <itemPath>src/Move.h</itemPath>
+      <itemPath>src/MoveList.h</itemPath>
+      <itemPath>src/MoveMasks.h</itemPath>
+      <itemPath>src/Piece.h</itemPath>
+      <itemPath>src/Player.h</itemPath>
+      <itemPath>src/Scores.h</itemPath>
+      <itemPath>src/SearchTreeNode.h</itemPath>
+      <itemPath>src/Sqr.h</itemPath>
+      <itemPath>src/StateInfo.h</itemPath>
+      <itemPath>src/Test.h</itemPath>
+      <itemPath>src/TranspositionTable.h</itemPath>
+      <itemPath>src/TreeGenerator.h</itemPath>
+      <itemPath>src/Zobrist.h</itemPath>
+      <itemPath>src/main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -45,6 +36,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>src</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
@@ -59,45 +53,61 @@
           <commandLine>-Wall -pedantic-errors</commandLine>
         </ccTool>
       </compileType>
-      <item path="BitBoard.h" ex="false" tool="3" flavor2="0">
+      <folder path="TestFiles/f1">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <ccTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f1</output>
+          <linkerLibItems>
+            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </folder>
+      <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Evaluator.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GamePlayer.h" ex="false" tool="3" flavor2="0">
+      <item path="src/GamePlayer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GameState.h" ex="false" tool="3" flavor2="0">
+      <item path="src/GameState.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Intrinsics.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Intrinsics.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Mask.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Mask.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MinMaxAI.h" ex="false" tool="3" flavor2="0">
+      <item path="src/MinMaxAI.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Move.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Move.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MoveList.h" ex="false" tool="3" flavor2="0">
+      <item path="src/MoveList.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MoveMasks.h" ex="false" tool="3" flavor2="0">
+      <item path="src/MoveMasks.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Piece.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Piece.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Player.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Player.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Scores.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Scores.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="SearchTreeNode.h" ex="false" tool="3" flavor2="0">
+      <item path="src/SearchTreeNode.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Sqr.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="StateInfo.h" ex="false" tool="3" flavor2="0">
+      <item path="src/StateInfo.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="TranspositionTable.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Test.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="TreeGenerator.h" ex="false" tool="3" flavor2="0">
+      <item path="src/TranspositionTable.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Zobrist.h" ex="false" tool="3" flavor2="0">
+      <item path="src/TreeGenerator.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/Zobrist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -126,45 +136,61 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="BitBoard.h" ex="false" tool="3" flavor2="0">
+      <folder path="TestFiles/f1">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <ccTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f1</output>
+          <linkerLibItems>
+            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </folder>
+      <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Evaluator.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GamePlayer.h" ex="false" tool="3" flavor2="0">
+      <item path="src/GamePlayer.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="GameState.h" ex="false" tool="3" flavor2="0">
+      <item path="src/GameState.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Intrinsics.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Intrinsics.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Mask.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Mask.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MinMaxAI.h" ex="false" tool="3" flavor2="0">
+      <item path="src/MinMaxAI.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Move.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Move.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MoveList.h" ex="false" tool="3" flavor2="0">
+      <item path="src/MoveList.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="MoveMasks.h" ex="false" tool="3" flavor2="0">
+      <item path="src/MoveMasks.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Piece.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Piece.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Player.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Player.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Scores.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Scores.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="SearchTreeNode.h" ex="false" tool="3" flavor2="0">
+      <item path="src/SearchTreeNode.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Sqr.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="StateInfo.h" ex="false" tool="3" flavor2="0">
+      <item path="src/StateInfo.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="TranspositionTable.h" ex="false" tool="3" flavor2="0">
+      <item path="src/Test.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="TreeGenerator.h" ex="false" tool="3" flavor2="0">
+      <item path="src/TranspositionTable.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="Zobrist.h" ex="false" tool="3" flavor2="0">
+      <item path="src/TreeGenerator.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/Zobrist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
   </confs>
