@@ -160,8 +160,8 @@ private:
 
 		int score = search(depth, alpha, beta, state);
 
-		//int nodeType = mResults[mPly] != null ? mResults[mPly].nodeType : -1;
-		int nodeType = -1; //TODO;
+		//NodeType nodeType = mResults[mPly] != null ? mResults[mPly].nodeType : -1; //TODO;
+		NodeType nodeType = NodeType::NONE;
 		mTreeGenerator.endNode(score, nodeType);
 
 		return score;

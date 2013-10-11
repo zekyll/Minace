@@ -6,6 +6,7 @@
 #include "Scores.h"
 #include "Evaluator.h"
 #include "../tests/Test.h"
+#include "../tests/TreeGeneratorTest.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -19,8 +20,8 @@ template class Zobrist_t<uint64_t>;
 int main(int argc, char** argv)
 {
 
-	Test t;
-	t.run();
+	Test().run();
+	TreeGeneratorTest().run();
 
 	return 0;
 }
