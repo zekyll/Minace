@@ -130,7 +130,7 @@ TScore Scores_t<TScore>::POSITIONAL_PIECE_VALUES[Player::COUNT][Piece::COUNT][Sq
 	}
 };
 
-template<typename TMask>
-Scores_t<TMask> Scores_t<TMask>::sStaticInit;
+template<typename TScore>
+Scores_t<TScore> Scores_t<TScore>::sStaticInit;
 
 }

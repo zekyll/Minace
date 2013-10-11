@@ -88,7 +88,7 @@ public:
 			throw std::invalid_argument("Search depth too small.");
 	}
 
-	Move getMove(const GameState& state) override
+	virtual Move getMove(const GameState& state) override
 	{
 		//mTree = nullptr;
 		mEvaluator.reset(state);

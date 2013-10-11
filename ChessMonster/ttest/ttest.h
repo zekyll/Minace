@@ -112,7 +112,7 @@ public:
 #define TTEST_BEFORE(DESCRIPTION) \
 	virtual void ttestBefore() override
 
-// Registers and declares a test case member funciton. Must be followed by function body.
+// Registers and declares a test case member function. Must be followed by function body.
 #define TTEST_CASE(DESCRIPTION) \
 	int TTEST_CONCAT(TTEST_UNIQUE_TEST_ID,_init) = \
 	(addTestCase(std::bind(&Test::TTEST_UNIQUE_TEST_ID, this), DESCRIPTION), 0); \
