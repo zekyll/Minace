@@ -19,19 +19,16 @@ public:
 	constexpr Sqr_t()
 	: mValue(-1)
 	{
-		;
 	}
 
 	explicit constexpr Sqr_t(T value)
 	: mValue(value)
 	{
-		;
 	}
 
 	constexpr Sqr_t(T row, T column)
 	: Sqr_t(row * 8 + column)
 	{
-		;
 	}
 
 	Sqr_t(const std::string& str)

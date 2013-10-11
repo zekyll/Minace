@@ -43,7 +43,9 @@ private:
 		TValue value;
 
 		Entry()
-		: flag(EMPTY) { }
+		: flag(EMPTY)
+		{
+		}
 	};
 
 	static constexpr size_t DEFAULT_INITIAL_CAPACITY = 16;

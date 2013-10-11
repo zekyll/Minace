@@ -52,19 +52,16 @@ public:
 	constexpr Mask_t()
 	: mValue(0ULL)
 	{
-		;
 	}
 
 	constexpr Mask_t(Sqr sqr)
 	: mValue(1ULL << sqr)
 	{
-		;
 	}
 
 	constexpr Mask_t(T value)
 	: mValue(value)
 	{
-		;
 	}
 
 	constexpr bool operator==(const Mask_t& rhs) const

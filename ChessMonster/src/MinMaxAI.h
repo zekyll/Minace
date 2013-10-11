@@ -322,7 +322,8 @@ private:
 		return depth;
 	}
 
-	void log(const std::string& msg) {
+	void log(const std::string& msg)
+	{
 		//		if (mLoggingEnabled)
 		//			logger.logMessage(msg);
 	}

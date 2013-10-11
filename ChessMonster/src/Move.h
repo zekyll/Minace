@@ -18,20 +18,17 @@ public:
 	constexpr Move()
 	: mValue(0)
 	{
-		;
 	}
 
 	constexpr Move(const Sqr fromSqr, const Sqr toSqr, const Piece pieceType,
 			const Piece capturedType, const Piece newType)
 	: mValue(fromSqr | toSqr << 8 | pieceType << 16 | (capturedType + 1) << 20 | newType << 24)
 	{
-		;
 	}
 
 	Move(const char* s)
 	: Move(std::string(s))
 	{
-		;
 	}
 
 	Move(const std::string& s)

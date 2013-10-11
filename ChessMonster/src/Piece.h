@@ -31,7 +31,6 @@ public:
 	explicit constexpr Piece_t(T value)
 	: mValue(value)
 	{
-		;
 	}
 
 	Piece_t(const std::string& s)

@@ -41,13 +41,11 @@ public:
 	"Ra8 Nb8 Bc8 Qd8 Ke8 Bf8 Ng8 Rh8 a7 b7 c7 d7 e7 f7 g7 h7"),
 	Player::WHITE)
 	{
-		;
 	}
 
 	GameState_t(std::string whitePieces, std::string blackPieces, Player startingPlayer)
 	: GameState_t(BitBoard(whitePieces, blackPieces), startingPlayer)
 	{
-		;
 	}
 
 	GameState_t(const BitBoard& board, Player startingPlayer)

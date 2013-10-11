@@ -72,7 +72,9 @@ protected:
 		}
 	}
 
-	virtual void ttestBefore() { };
+	virtual void ttestBefore()
+	{
+	}
 public:
 	virtual ~TestBase() = default;
 
