@@ -194,15 +194,15 @@ private:
 		const StateInfo* info = mTrposTbl.get(state.getId());
 		if (info && info->depth >= depth) {
 			++mTrposTblHitCount;
-			if (info->nodeType == StateInfo::NodeType::EXACT
-					|| (info->nodeType == StateInfo::NodeType::LOWER_BOUND && info->score >= beta)
-					|| (info->nodeType == StateInfo::NodeType::UPPER_BOUND && info->score <= alpha))
+			if (info->nodeType == NodeType::EXACT
+					|| (info->nodeType == NodeType::LOWER_BOUND && info->score >= beta)
+					|| (info->nodeType == NodeType::UPPER_BOUND && info->score <= alpha))
 				return info->score;
 		}
 
 		// Initialize the result structure.
 		mResults[mPly].id = state.getId();
-		mResults[mPly].nodeType = StateInfo::NodeType::UPPER_BOUND;
+		mResults[mPly].nodeType = NodeType::UPPER_BOUND;
 		mResults[mPly].score = Scores::MIN;
 		mEarlierStates.put(state.getId());
 
@@ -271,7 +271,7 @@ private:
 		// Continue search recursively. For PV node a full search is made and zero window search
 		// for others.
 		int score;
-		if (mResults[mPly - 1].nodeType == StateInfo::NodeType::UPPER_BOUND) {
+		if (mResults[mPly - 1].nodeType == NodeType::UPPER_BOUND) {
 			// Search normally until value is found in range ]alfa,beta[
 			score = -createNodeAndSearch(depth - 1, -beta, -alpha, state, move);
 		} else {
@@ -295,9 +295,9 @@ private:
 				//				if (mPly == 0 && mLogger)
 				//					log("  " + Move.toString(move) + " " + (score - rootScore));
 				if (score >= beta)
-					mResults[mPly].nodeType = StateInfo::NodeType::LOWER_BOUND;
+					mResults[mPly].nodeType = NodeType::LOWER_BOUND;
 				else
-					mResults[mPly].nodeType = StateInfo::NodeType::EXACT;
+					mResults[mPly].nodeType = NodeType::EXACT;
 				alpha = score;
 			}
 		}

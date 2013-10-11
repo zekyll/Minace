@@ -12,6 +12,7 @@
       <itemPath>src/Move.h</itemPath>
       <itemPath>src/MoveList.h</itemPath>
       <itemPath>src/MoveMasks.h</itemPath>
+      <itemPath>src/NodeType.h</itemPath>
       <itemPath>src/Piece.h</itemPath>
       <itemPath>src/Player.h</itemPath>
       <itemPath>src/Scores.h</itemPath>
@@ -80,6 +81,8 @@
       <item path="src/MoveList.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/MoveMasks.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/NodeType.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Piece.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -151,6 +154,8 @@
       <item path="src/MoveList.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/MoveMasks.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/NodeType.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Piece.h" ex="false" tool="3" flavor2="0">
       </item>
