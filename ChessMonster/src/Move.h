@@ -50,7 +50,7 @@ public:
 		if (s[i++] == 'x') {
 			capturedType = Piece::PAWN;
 			if (isupper(s[i]))
-				capturedType = s.substr(i, 1);
+				capturedType = s.substr(i++, 1);
 		}
 
 		Sqr toSqr(s, i);
@@ -59,7 +59,7 @@ public:
 		if (i != s.length()) {
 			if (pieceType != Piece::PAWN)
 				throw std::invalid_argument("Invalid move format.");
-			newType = s.substr(i, 1);
+			newType = s.substr(i++, 1);
 		}
 
 		*this = Move(fromSqr, toSqr, pieceType, capturedType, newType);
