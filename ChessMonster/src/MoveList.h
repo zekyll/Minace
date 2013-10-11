@@ -9,7 +9,8 @@ namespace cm {
  * Manages a list of pseudo-legal moves in specific game state. The list is divided in multiple
  * priority classes to allow simple and efficient move ordering for the search algorithm.
  */
-class MoveList
+template<typename T = void>
+class MoveList_t
 {
 public:
 	static constexpr unsigned PRIORITIES = 12;
@@ -120,5 +121,13 @@ private:
 		moves[priority][idx] = Move(fromSqr, toSqr, pieceType, capturedType, newType);
 	}
 };
+
+template<typename T>
+constexpr unsigned MoveList_t<T>::CAPTURE_PRIORITIES[][6];
+
+template<typename T>
+constexpr unsigned MoveList_t<T>::PROMOTION_PRIORITIES[];
+
+typedef MoveList_t<> MoveList;
 
 }
