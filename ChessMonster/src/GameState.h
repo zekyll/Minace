@@ -500,7 +500,7 @@ private:
 		std::vector<Move> moves;
 		for (Sqr sqr : mBoard(mPlayer)) {
 			getLegalMoves(sqr, moves);
-			if (moves.empty())
+			if (!moves.empty())
 				return true;
 		}
 		return false;
