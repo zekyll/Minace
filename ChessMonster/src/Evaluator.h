@@ -73,7 +73,7 @@ public:
 
 		score -= Scores::POSITIONAL_PIECE_VALUES[mPlayer][pieceType][fromSqr];
 		score += Scores::POSITIONAL_PIECE_VALUES[mPlayer][newType][toSqr];
-		if (capturedType >= 0)
+		if (capturedType)
 			score += Scores::POSITIONAL_PIECE_VALUES[~mPlayer][capturedType][toSqr];
 
 		//TODO handle castling and en passant
