@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="90">
+<configurationDescriptor version="89">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="src" displayName="src" projectFiles="true">
       <itemPath>src/BitBoard.h</itemPath>
@@ -18,7 +18,6 @@
       <itemPath>src/SearchTreeNode.h</itemPath>
       <itemPath>src/Sqr.h</itemPath>
       <itemPath>src/StateInfo.h</itemPath>
-      <itemPath>src/Test.h</itemPath>
       <itemPath>src/TranspositionTable.h</itemPath>
       <itemPath>src/TreeGenerator.h</itemPath>
       <itemPath>src/Zobrist.h</itemPath>
@@ -44,13 +43,14 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>src</Elem>
-    <Elem>ttest</Elem>
     <Elem>tests</Elem>
+    <Elem>ttest</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
       <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
@@ -61,20 +61,6 @@
           <commandLine>-Wall -pedantic-errors</commandLine>
         </ccTool>
       </compileType>
-      <folder path="TestFiles/f1">
-        <cTool>
-          <commandLine>`cppunit-config --cflags`</commandLine>
-        </cTool>
-        <ccTool>
-          <commandLine>`cppunit-config --cflags`</commandLine>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f1</output>
-          <linkerLibItems>
-            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
-          </linkerLibItems>
-        </linkerTool>
-      </folder>
       <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
@@ -106,8 +92,6 @@
       <item path="src/Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/StateInfo.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/Test.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/TranspositionTable.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -124,6 +108,7 @@
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
         <dependencyChecking>true</dependencyChecking>
         <rebuildPropChanged>false</rebuildPropChanged>
@@ -134,11 +119,10 @@
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
-          <architecture>2</architecture>
           <standard>8</standard>
           <commandLine>-Wall -pedantic-errors -march=corei7</commandLine>
           <preprocessorList>
-            <Elem>NDEBUG</Elem>
+            <Elem>NDEBUG=1</Elem>
           </preprocessorList>
         </ccTool>
         <fortranCompilerTool>
@@ -148,20 +132,6 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <folder path="TestFiles/f1">
-        <cTool>
-          <commandLine>`cppunit-config --cflags`</commandLine>
-        </cTool>
-        <ccTool>
-          <commandLine>`cppunit-config --cflags`</commandLine>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f1</output>
-          <linkerLibItems>
-            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
-          </linkerLibItems>
-        </linkerTool>
-      </folder>
       <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
@@ -193,8 +163,6 @@
       <item path="src/Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/StateInfo.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="src/Test.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/TranspositionTable.h" ex="false" tool="3" flavor2="0">
       </item>

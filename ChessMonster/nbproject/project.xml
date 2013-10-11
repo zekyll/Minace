@@ -11,8 +11,8 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>src</sourceRootElem>
-                <sourceRootElem>ttest</sourceRootElem>
                 <sourceRootElem>tests</sourceRootElem>
+                <sourceRootElem>ttest</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
@@ -24,9 +24,6 @@
                     <type>1</type>
                 </confElem>
             </confList>
-            <formatting>
-                <project-formatting-style>false</project-formatting-style>
-            </formatting>
         </data>
     </configuration>
 </project>
