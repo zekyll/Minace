@@ -37,15 +37,15 @@ private:
 
 	static constexpr size_t MAX_TRANSPOSITION_TABLE_SIZE = 1024 * 1024;
 
-	const unsigned mSearchDepth;
+	unsigned mSearchDepth;
 
-	const unsigned mQuiescenceSearchDepth;
+	unsigned mQuiescenceSearchDepth;
 
 	TranspositionTable<StateInfo> mTrposTbl;
 
 	TranspositionTable<uint64_t> mEarlierStates;
 
-	const double mTimeLimit;
+	double mTimeLimit;
 
 	Logger* mLogger;
 
