@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <type_traits>
 
 namespace ttest {
 
@@ -114,7 +115,8 @@ public:
 
 // Registers and declares a test case member function. Must be followed by function body.
 #define TTEST_CASE(DESCRIPTION) \
-	int TTEST_CONCAT(TTEST_UNIQUE_TEST_ID,_init) = \
-	(addTestCase(std::bind(&Test::TTEST_UNIQUE_TEST_ID, this), DESCRIPTION), 0); \
+	int TTEST_CONCAT(TTEST_UNIQUE_TEST_ID,_init) = (addTestCase(std::bind( \
+                &std::remove_reference<decltype(*this)>::type::TTEST_UNIQUE_TEST_ID, this), \
+                DESCRIPTION), 0); \
 	void TTEST_UNIQUE_TEST_ID()
 }
