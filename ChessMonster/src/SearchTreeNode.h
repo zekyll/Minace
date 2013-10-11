@@ -54,24 +54,6 @@ public:
 		mNodeType = nodeType;
 	}
 
-	std::string toStr() const
-	{
-		std::string str;
-		if (mMove) {
-			str = mMove.toStr();
-		} else {
-			str = mPly > 0 ? "Null move search" : "";
-		}
-		if (mPly > 0) {
-			str += " " + getIneqSign(-mScore, -mBeta, -mAlpha) + itostr(-mScore);
-		}
-		return str
-				+ " (\u03b1=" + itostr(mAlpha)
-				+ " \u03b2=" + itostr(mBeta)
-				+ " s" + getIneqSign(mScore, mAlpha, mBeta) + itostr(mScore)
-				+ ")";
-	}
-
 	std::vector<SearchTreeNode>& nodes()
 	{
 		return mNodes;
@@ -115,6 +97,31 @@ public:
 	NodeType nodeType() const
 	{
 		return mNodeType;
+	}
+
+	std::string toStr(unsigned depth = 0, unsigned indent = 0) const
+	{
+		std::string str(4 * indent, ' ');
+
+		if (mMove)
+			str += mMove.toStr();
+		else
+			str += mPly > 0 ? "Null move search" : "";
+
+		if (mPly > 0)
+			str += " " + getIneqSign(-mScore, -mBeta, -mAlpha) + itostr(-mScore);
+
+		str += +" (\u03b1=" + itostr(mAlpha)
+				+ " \u03b2=" + itostr(mBeta)
+				+ " s" + getIneqSign(mScore, mAlpha, mBeta) + itostr(mScore)
+				+ ")\n";
+
+		if (depth > 0) {
+			for (const SearchTreeNode& node : mNodes)
+				str += node.toStr(depth - 1, indent + 1);
+		}
+
+		return str;
 	}
 
 private:
