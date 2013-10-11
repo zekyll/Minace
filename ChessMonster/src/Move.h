@@ -115,7 +115,7 @@ public:
 		return !!mValue;
 	}
 
-	std::string toStr()
+	std::string toStr() const
 	{
 		std::string ret = pieceType().toStr() + fromSqr().toStr();
 		ret += capturedType() ? "x" + capturedType().toStr() : "-";
