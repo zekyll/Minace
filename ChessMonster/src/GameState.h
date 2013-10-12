@@ -54,6 +54,9 @@ public:
 
 		mHist[0].zobristCode = Zobrist::EMPTY_RND;
 		mHist[0].enPassantSqr = Sqr::NONE;
+		mHist[0].castlingRights = 0;
+		mHist[0].halfMoveClock = 0;
+
 		if (startingPlayer == Player::BLACK)
 			mHist[0].zobristCode ^= Zobrist::PLAYER_RND;
 
