@@ -262,7 +262,7 @@ private:
 			mResults[mPly].score = 0;
 	}
 
-	int searchMove(int depth, int alpha, int beta, GameState state, Move move)
+	int searchMove(int depth, int alpha, int beta, GameState& state, Move move)
 	{
 		// Make move.
 		++mPly;
