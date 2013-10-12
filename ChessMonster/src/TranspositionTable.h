@@ -153,7 +153,7 @@ private:
 
 		capacity = newCapacity;
 		mask = newMask;
-		entries = newEntries;
+		entries = std::move(newEntries);
 		reservedCount -= removedCount;
 		removedCount = 0;
 	}
