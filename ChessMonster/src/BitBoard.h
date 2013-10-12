@@ -27,10 +27,11 @@ public:
 	{
 	}
 
-	BitBoard(const std::string& epd)
+	BitBoard(const std::string& epd, size_t* idx = nullptr)
 	: BitBoard()
 	{
-		for (unsigned row = 0, col = 0, i = 0; row < 7 || col < 8; ++i) {
+		unsigned i = idx ? *idx : 0;
+		for (unsigned row = 0, col = 0; row < 7 || col < 8; ++i) {
 			if (i >= epd.size())
 				throw std::invalid_argument("Invalid EPD string.");
 			if (epd[i] >= '1' && epd[i] <= '8') {
@@ -51,7 +52,8 @@ public:
 				throw std::invalid_argument("Invalid EPD string.");
 			}
 		}
-		;
+		if (idx)
+			*idx = i;
 	}
 
 	BitBoard(const std::string& whitePieces, const std::string& blackPieces)
