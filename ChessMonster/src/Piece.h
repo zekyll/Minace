@@ -35,8 +35,19 @@ public:
 
 	Piece_t(const std::string& s)
 	{
-		std::string(&symbols)[COUNT + 1] = SYMBOLS[0][Player::WHITE];
-		mValue = std::find(std::begin(symbols) + 1, std::end(symbols), s) - std::begin(symbols) - 1;
+		for (unsigned i = 0; i < 2; ++i) {
+			for (unsigned player = 0; player < Player::COUNT; ++player) {
+				std::string(&symbols)[COUNT + 1] = SYMBOLS[i][player];
+				auto b = std::begin(symbols);
+				auto e = std::end(symbols);
+				auto r = std::find(b + 1, e, s);
+				if (r != e) {
+					mValue = r - b - 1;
+					return;
+				}
+			}
+		}
+		mValue = NONE.mValue;
 	}
 
 	std::string toStr(Player player = Player::WHITE, bool displayPawnAndEmpty = false) const
