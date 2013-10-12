@@ -199,6 +199,7 @@ private:
 					|| (info->nodeType == NodeType::UPPER_BOUND && info->score <= alpha))
 				return info->score;
 		}
+		Move bestMove = info && depth > 0 ? info->bestMove : Move();
 
 		// Initialize the result structure.
 		mResults[mPly].id = state.getId();
@@ -208,7 +209,7 @@ private:
 
 		// Search all moves.
 		depth = applyNullMoveReduction(depth, beta, state);
-		searchAllMoves(depth, alpha, beta, state, info && depth > 0 ? info->bestMove : Move());
+		searchAllMoves(depth, alpha, beta, state, bestMove);
 
 		mEarlierStates.remove(state.getId());
 
