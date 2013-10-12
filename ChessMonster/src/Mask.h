@@ -3,6 +3,7 @@
 #include "Sqr.h"
 #include "Intrinsics.h"
 #include <cstdint>
+#include <iosfwd>
 
 namespace cm {
 
@@ -127,6 +128,11 @@ public:
 		for (Sqr sqr : * this)
 			s += sqr.toStr() + " ";
 		return s.empty() ? "" : s.substr(0, s.length() - 1);
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const Mask_t& mask)
+	{
+		return os << mask.toStr();
 	}
 };
 
