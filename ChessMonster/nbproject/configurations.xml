@@ -3,6 +3,7 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="src" displayName="src" projectFiles="true">
       <itemPath>src/BitBoard.h</itemPath>
+      <itemPath>src/Epd.h</itemPath>
       <itemPath>src/Evaluator.h</itemPath>
       <itemPath>src/GamePlayer.h</itemPath>
       <itemPath>src/GameState.h</itemPath>
@@ -64,6 +65,8 @@
         </ccTool>
       </compileType>
       <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -139,6 +142,8 @@
         </asmTool>
       </compileType>
       <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
       </item>
