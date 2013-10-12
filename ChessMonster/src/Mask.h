@@ -3,6 +3,7 @@
 #include "Sqr.h"
 #include "Intrinsics.h"
 #include <cstdint>
+#include <utility>
 #include <iosfwd>
 
 namespace cm {
@@ -58,6 +59,13 @@ public:
 	constexpr Mask_t(Sqr sqr)
 	: mValue(1ULL << sqr)
 	{
+	}
+
+	Mask_t(std::initializer_list<T> sqrs)
+	: mValue(0ULL)
+	{
+		for (T sqr : sqrs)
+			mValue |= 1ULL << sqr;
 	}
 
 	constexpr Mask_t(T value)
