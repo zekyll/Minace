@@ -126,7 +126,7 @@
         <ccTool>
           <developmentMode>5</developmentMode>
           <standard>8</standard>
-          <commandLine>-Wall -pedantic-errors -march=corei7</commandLine>
+          <commandLine>-Wall -pedantic-errors -march=corei7 -mtune=corei7</commandLine>
           <preprocessorList>
             <Elem>NDEBUG=1</Elem>
           </preprocessorList>

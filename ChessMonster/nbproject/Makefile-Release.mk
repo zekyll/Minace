@@ -42,8 +42,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-Wall -pedantic-errors -march=corei7
-CXXFLAGS=-Wall -pedantic-errors -march=corei7
+CCFLAGS=-Wall -pedantic-errors -march=corei7 -mtune=corei7
+CXXFLAGS=-Wall -pedantic-errors -march=corei7 -mtune=corei7
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -65,7 +65,7 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/chessmonster: ${OBJECTFILES}
 ${OBJECTDIR}/src/main.o: src/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -DNDEBUG=1 -std=c++11 -Wall -pedantic-errors -march=corei7 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/main.o src/main.cpp
+	$(COMPILE.cc) -O2 -DNDEBUG=1 -std=c++11 -Wall -pedantic-errors -march=corei7 -mtune=corei7 -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/main.o src/main.cpp
 
 # Subprojects
 .build-subprojects:
