@@ -27,7 +27,11 @@
     </logicalFolder>
     <logicalFolder name="tests" displayName="tests" projectFiles="true">
       <itemPath>tests/EpdTest.h</itemPath>
+      <itemPath>tests/EvaluatorTest.h</itemPath>
       <itemPath>tests/GameStateTest.h</itemPath>
+      <itemPath>tests/MinMaxAITest.h</itemPath>
+      <itemPath>tests/MoveListTest.h</itemPath>
+      <itemPath>tests/ScoresTest.h</itemPath>
       <itemPath>tests/Test.h</itemPath>
       <itemPath>tests/TreeGeneratorTest.h</itemPath>
     </logicalFolder>
@@ -112,7 +116,15 @@
       </item>
       <item path="tests/EpdTest.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="tests/EvaluatorTest.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="tests/GameStateTest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/MinMaxAITest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/MoveListTest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/ScoresTest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/Test.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -193,7 +205,15 @@
       </item>
       <item path="tests/EpdTest.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="tests/EvaluatorTest.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="tests/GameStateTest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/MinMaxAITest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/MoveListTest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/ScoresTest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/Test.h" ex="false" tool="3" flavor2="0">
       </item>

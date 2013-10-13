@@ -8,6 +8,10 @@
 #include "../tests/Test.h"
 #include "../tests/EpdTest.h"
 #include "../tests/GameStateTest.h"
+#include "../tests/MinMaxAITest.h"
+#include "../tests/EvaluatorTest.h"
+#include "../tests/ScoresTest.h"
+#include "../tests/MoveListTest.h"
 #include "../tests/TreeGeneratorTest.h"
 #include <cstdlib>
 #include <iostream>
@@ -25,6 +29,10 @@ int main(int argc, char** argv)
 	Test().run();
 	EpdTest().run();
 	GameStateTest().run();
+	ScoresTest().run();
+	MoveListTest().run();
+	EvaluatorTest().run();
+	MinMaxAITest().run();
 	TreeGeneratorTest().run();
 
 	return 0;
