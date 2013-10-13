@@ -7,6 +7,7 @@
 #include "BitBoard.h"
 #include "MoveMasks.h"
 #include "Zobrist.h"
+#include "Epd.h"
 #include <string>
 #include <iosfwd>
 
@@ -38,22 +39,37 @@ public:
 
 	GameState_t()
 	: GameState_t(BitBoard("Ra1 Nb1 Bc1 Qd1 Ke1 Bf1 Ng1 Rh1 a2 b2 c2 d2 e2 f2 g2 h2",
-	"Ra8 Nb8 Bc8 Qd8 Ke8 Bf8 Ng8 Rh8 a7 b7 c7 d7 e7 f7 g7 h7"),
-	Player::WHITE)
+	"Ra8 Nb8 Bc8 Qd8 Ke8 Bf8 Ng8 Rh8 a7 b7 c7 d7 e7 f7 g7 h7"), Player::WHITE, ~Mask())
 	{
 	}
 
-	GameState_t(std::string whitePieces, std::string blackPieces, Player startingPlayer)
-	: GameState_t(BitBoard(whitePieces, blackPieces), startingPlayer)
+	GameState_t(const std::string& epd)
+	: GameState_t(Epd(epd))
 	{
 	}
 
-	GameState_t(const BitBoard& board, Player startingPlayer)
+	GameState_t(const Epd& epd)
+	: GameState_t(epd.board(), epd.startingPlayer(), epd.castlingRights(), epd.enpassantSqr())
+	{
+	}
+
+	GameState_t(std::string whitePieces, std::string blackPieces,
+			Player startingPlayer = Player::WHITE, Mask castlingRights = Mask(),
+			Sqr enPassantSqr = Sqr::NONE)
+	: GameState_t(BitBoard(whitePieces, blackPieces), startingPlayer, castlingRights, enPassantSqr)
+	{
+	}
+
+	GameState_t(const BitBoard& board, Player startingPlayer = Player::WHITE,
+			Mask castlingRights = Mask(), Sqr enPassantSqr = Sqr::NONE)
 	: mBoard(board), mPlayer(startingPlayer), mPly(0), mHist(1)
 	{
+		if (enPassantSqr && (!(Mask(enPassantSqr) & Mask(0xFF0000ULL << 24 * mPlayer))
+				|| mBoard(~mPlayer, Sqr(enPassantSqr + 8 * ~mPlayer))))
+			throw std::invalid_argument("Invalid en passant square.");
 
 		mHist[0].zobristCode = Zobrist::EMPTY_RND;
-		mHist[0].enPassantSqr = Sqr::NONE;
+		mHist[0].enPassantSqr = enPassantSqr;
 		mHist[0].castlingRights = 0;
 		mHist[0].halfMoveClock = 0;
 
@@ -61,12 +77,12 @@ public:
 			mHist[0].zobristCode ^= Zobrist::PLAYER_RND;
 
 		if (mBoard(Player::WHITE, Piece::KING, Sqr(60))) {
-			checkCastlingRight(Player::WHITE, Sqr(56));
-			checkCastlingRight(Player::WHITE, Sqr(63));
+			checkCastlingRight(Player::WHITE, Sqr(56), castlingRights);
+			checkCastlingRight(Player::WHITE, Sqr(63), castlingRights);
 		}
 		if (mBoard(Player::BLACK, Piece::KING, Sqr(4))) {
-			checkCastlingRight(Player::BLACK, Sqr(0));
-			checkCastlingRight(Player::BLACK, Sqr(7));
+			checkCastlingRight(Player::BLACK, Sqr(0), castlingRights);
+			checkCastlingRight(Player::BLACK, Sqr(7), castlingRights);
 		}
 
 		for (unsigned player = 0; player < Player::COUNT; ++player) {
@@ -490,9 +506,9 @@ private:
 			mHist[mPly].halfMoveClock = mHist[mPly - 1].halfMoveClock + 1;
 	}
 
-	void checkCastlingRight(Player player, Sqr sqr)
+	void checkCastlingRight(Player player, Sqr sqr, Mask mask)
 	{
-		if (mBoard(player, Piece::ROOK, sqr)) {
+		if (mBoard(player, Piece::ROOK, sqr) & mask) {
 			mHist[mPly].castlingRights |= sqr;
 			mHist[mPly].zobristCode ^= Zobrist::CASTLINGRIGHTS_RND[sqr];
 		}

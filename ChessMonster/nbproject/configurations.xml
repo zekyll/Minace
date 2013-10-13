@@ -27,6 +27,7 @@
     </logicalFolder>
     <logicalFolder name="tests" displayName="tests" projectFiles="true">
       <itemPath>tests/EpdTest.h</itemPath>
+      <itemPath>tests/GameStateTest.h</itemPath>
       <itemPath>tests/Test.h</itemPath>
       <itemPath>tests/TreeGeneratorTest.h</itemPath>
     </logicalFolder>
@@ -111,6 +112,8 @@
       </item>
       <item path="tests/EpdTest.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="tests/GameStateTest.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="tests/Test.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/TreeGeneratorTest.h" ex="false" tool="3" flavor2="0">
@@ -189,6 +192,8 @@
       <item path="src/main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/EpdTest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/GameStateTest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/Test.h" ex="false" tool="3" flavor2="0">
       </item>

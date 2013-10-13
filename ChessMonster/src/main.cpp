@@ -7,6 +7,7 @@
 #include "Evaluator.h"
 #include "../tests/Test.h"
 #include "../tests/EpdTest.h"
+#include "../tests/GameStateTest.h"
 #include "../tests/TreeGeneratorTest.h"
 #include <cstdlib>
 #include <iostream>
@@ -23,6 +24,7 @@ int main(int argc, char** argv)
 
 	Test().run();
 	EpdTest().run();
+	GameStateTest().run();
 	TreeGeneratorTest().run();
 
 	return 0;
