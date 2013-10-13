@@ -101,10 +101,10 @@ private:
 			if (s[idx] == '-') {
 				++idx;
 			} else {
-				parseCastlingRight(s, idx, 'K', Sqr(0));
-				parseCastlingRight(s, idx, 'Q', Sqr(7));
-				parseCastlingRight(s, idx, 'k', Sqr(56));
-				parseCastlingRight(s, idx, 'q', Sqr(63));
+				parseCastlingRight(s, idx, 'K', Sqr(56));
+				parseCastlingRight(s, idx, 'Q', Sqr(63));
+				parseCastlingRight(s, idx, 'k', Sqr(0));
+				parseCastlingRight(s, idx, 'q', Sqr(7));
 			}
 		} else
 			throw std::invalid_argument("Missing castling rights in EPD string.");
