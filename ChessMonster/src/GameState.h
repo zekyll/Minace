@@ -340,8 +340,7 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& os, const GameState_t& state)
 	{
-		os << state.mBoard;
-		return os;
+		return os << state.mBoard;
 	}
 
 private:

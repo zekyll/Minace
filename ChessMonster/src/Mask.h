@@ -40,7 +40,6 @@ public:
 		MaskIterator(T mask)
 		: mMask(mask)
 		{
-			;
 		}
 
 		friend class Mask_t;

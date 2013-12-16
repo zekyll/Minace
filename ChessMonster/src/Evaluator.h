@@ -25,7 +25,6 @@ public:
 	Evaluator(size_t maxDepth)
 	: mPly(0), mScores(maxDepth + 1), mPlayer(Player::NONE)
 	{
-		;
 	}
 
 	void reset(const GameState& state)
