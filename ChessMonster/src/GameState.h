@@ -10,6 +10,7 @@
 #include "Epd.h"
 #include <string>
 #include <iosfwd>
+#include <cstdint>
 
 namespace cm {
 

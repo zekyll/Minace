@@ -3,7 +3,6 @@
 #include "../src/MinMaxAI.h"
 #include "../src/GameState.h"
 #include "../ttest/ttest.h"
-#include <memory>
 
 namespace cm {
 

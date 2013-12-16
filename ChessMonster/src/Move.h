@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <cstdint>
 #include <cctype>
+#include <cstdint>
 
 namespace cm {
 

@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Intrinsics.h"
 #include <vector>
+#include <cstdint>
 
 namespace cm {
 
