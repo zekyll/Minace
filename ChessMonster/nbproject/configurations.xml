@@ -5,6 +5,7 @@
       <itemPath>src/BitBoard.h</itemPath>
       <itemPath>src/Epd.h</itemPath>
       <itemPath>src/Evaluator.h</itemPath>
+      <itemPath>src/GameGenerator.h</itemPath>
       <itemPath>src/GamePlayer.h</itemPath>
       <itemPath>src/GameState.h</itemPath>
       <itemPath>src/Intrinsics.h</itemPath>
@@ -77,6 +78,8 @@
       <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/GameGenerator.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/GamePlayer.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -170,6 +173,8 @@
       <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/GameGenerator.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/GamePlayer.h" ex="false" tool="3" flavor2="0">
       </item>
