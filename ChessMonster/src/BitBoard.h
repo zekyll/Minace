@@ -4,6 +4,7 @@
 #include "Piece.h"
 #include "Sqr.h"
 #include "Mask.h"
+#include <sstream>
 #include <cstdint>
 #include <string>
 #include <cctype>
@@ -152,6 +153,13 @@ public:
 	bool operator!=(const BitBoard& rhs) const
 	{
 		return !(*this == rhs);
+	}
+
+	std::string toStr() const
+	{
+		std::stringstream ss;
+		ss << *this;
+		return ss.str();
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const BitBoard& board)
