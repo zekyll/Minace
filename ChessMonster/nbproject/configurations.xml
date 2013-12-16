@@ -25,6 +25,7 @@
       <itemPath>src/StdOutLogger.h</itemPath>
       <itemPath>src/TranspositionTable.h</itemPath>
       <itemPath>src/TreeGenerator.h</itemPath>
+      <itemPath>src/Util.h</itemPath>
       <itemPath>src/Zobrist.h</itemPath>
       <itemPath>src/main.cpp</itemPath>
     </logicalFolder>
@@ -118,6 +119,8 @@
       <item path="src/TranspositionTable.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/TreeGenerator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/Util.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Zobrist.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -213,6 +216,8 @@
       <item path="src/TranspositionTable.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/TreeGenerator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/Util.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Zobrist.h" ex="false" tool="3" flavor2="0">
       </item>
