@@ -153,13 +153,13 @@ private:
 	{
 		std::vector<unsigned> bitPositions = getBitPositions(ROOK_OCCUPANCY_MASKS[sqr]);
 		unsigned variationCount = 1 << bitCount((uint64_t) ROOK_OCCUPANCY_MASKS[sqr]);
-#ifdef NDEBUG
+#ifndef NDEBUG
 		bool used[4096] = {};
 #endif
 		for (unsigned i = 0; i < variationCount; ++i) {
 			TMask occupancy = getOccupancyVariation(bitPositions, i);
 			unsigned hash = rookOccupancyHash(sqr, occupancy);
-#ifdef NDEBUG
+#ifndef NDEBUG
 			assert(!used[hash]);
 			used[hash] = true;
 #endif
@@ -174,13 +174,13 @@ private:
 	{
 		std::vector<unsigned> bitPositions = getBitPositions(BISHOP_OCCUPANCY_MASKS[sqr]);
 		unsigned variationCount = 1 << bitCount((uint64_t) BISHOP_OCCUPANCY_MASKS[sqr]);
-#ifdef NDEBUG
+#ifndef NDEBUG
 		bool used[4096] = {};
 #endif
 		for (unsigned i = 0; i < variationCount; ++i) {
 			TMask occupancy = getOccupancyVariation(bitPositions, i);
 			unsigned hash = bishopOccupancyHash(sqr, occupancy);
-#ifdef NDEBUD
+#ifndef NDEBUG
 			assert(!used[hash]);
 			used[hash] = true;
 #endif
