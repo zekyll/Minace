@@ -2,6 +2,7 @@
 <configurationDescriptor version="89">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="src" displayName="src" projectFiles="true">
+      <itemPath>src/App.h</itemPath>
       <itemPath>src/BitBoard.h</itemPath>
       <itemPath>src/Epd.h</itemPath>
       <itemPath>src/Evaluator.h</itemPath>
@@ -76,6 +77,8 @@
           <commandLine>-Wall -pedantic-errors</commandLine>
         </ccTool>
       </compileType>
+      <item path="src/App.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
@@ -177,6 +180,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="src/App.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
