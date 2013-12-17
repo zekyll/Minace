@@ -69,6 +69,8 @@ private:
 
 	Evaluator mEvaluator;
 
+	double mEffectiveBranchingFactor;
+
 	Move mBestMove;
 
 public:
@@ -85,6 +87,7 @@ public:
 	mTreeGenerator(treeGenerationDepth),
 	mMoveLists(searchDepth + 1 + quiescenceSearchDepth),
 	mEvaluator(searchDepth + quiescenceSearchDepth),
+	mEffectiveBranchingFactor(0.0),
 	mBestMove()
 	{
 		if (searchDepth < 2)
@@ -99,6 +102,8 @@ public:
 		setEarlierStates(state);
 		mStartTime = std::chrono::high_resolution_clock::now();
 		mTrposTbl.clear();
+		mNodeCount = 0;
+		mEffectiveBranchingFactor = 0.0;
 		mBestMove = Move(); // none
 		GameState stateCopy = state;
 		//		unsigned lastIterNodeCount = 0, lastIterTrPosTblHitCount = 0, lastIterTrposTblSize = 0;
@@ -135,12 +140,18 @@ public:
 	//		return mTree;
 	//	}
 
+	double effectiveBranchingFactor() const
+	{
+		return mEffectiveBranchingFactor;
+	}
+
 private:
 
 	bool findMove(GameState state, int depth)
 	{
 		log("depth=" + std::to_string(depth));
 
+		unsigned prevNodeCount = mNodeCount;
 		mNodeCount = 0;
 		mTrposTblHitCount = 0;
 		mPly = 0;
@@ -154,6 +165,7 @@ private:
 		}
 
 		mTree = mTreeGenerator.getTree();
+		mEffectiveBranchingFactor = (double) mNodeCount / (prevNodeCount ? prevNodeCount : 1);
 
 		return true;
 	}
