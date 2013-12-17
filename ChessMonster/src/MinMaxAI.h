@@ -152,7 +152,7 @@ public:
 
 private:
 
-	bool findMove(GameState state, int depth)
+	bool findMove(GameState& state, int depth)
 	{
 		log("depth=" + std::to_string(depth));
 
