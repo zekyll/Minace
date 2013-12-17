@@ -5,6 +5,8 @@
 #include "MoveList.h"
 #include "Scores.h"
 #include "Evaluator.h"
+#include "PerformanceTest.h"
+#include "StdOutLogger.h"
 #include "../tests/Test.h"
 #include "../tests/EpdTest.h"
 #include "../tests/GameStateTest.h"
@@ -36,6 +38,10 @@ int main(int argc, char** argv)
 	MinMaxAITest().run();
 	TreeGeneratorTest().run();
 	UtilTest().run();
+
+	StdOutLogger stdOutLogger;
+	PerformanceTest pftest(stdOutLogger, 2, 5.0, true);
+	pftest();
 
 	return 0;
 }
