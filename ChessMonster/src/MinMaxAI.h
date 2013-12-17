@@ -69,6 +69,8 @@ private:
 
 	Evaluator mEvaluator;
 
+	Move mBestMove;
+
 public:
 
 	MinMaxAI(Logger* logger, unsigned searchDepth, unsigned quiescenceSearchDepth, double timeLimit,
@@ -82,7 +84,8 @@ public:
 	mResults(searchDepth + 1 + quiescenceSearchDepth),
 	mTreeGenerator(treeGenerationDepth),
 	mMoveLists(searchDepth + 1 + quiescenceSearchDepth),
-	mEvaluator(searchDepth + quiescenceSearchDepth)
+	mEvaluator(searchDepth + quiescenceSearchDepth),
+	mBestMove()
 	{
 		if (searchDepth < 2)
 			throw std::invalid_argument("Search depth too small.");
@@ -96,12 +99,12 @@ public:
 		setEarlierStates(state);
 		mStartTime = std::chrono::high_resolution_clock::now();
 		mTrposTbl.clear();
-		Move bestMove; // none
+		mBestMove = Move(); // none
 		GameState stateCopy = state;
 		//		unsigned lastIterNodeCount = 0, lastIterTrPosTblHitCount = 0, lastIterTrposTblSize = 0;
 		//		double lastIterBranchingFactor = 0.0;
 
-		for (int depth = 2; (unsigned) depth <= mSearchDepth; ++depth) {
+		for (int depth = 1; (unsigned) depth <= mSearchDepth; ++depth) {
 			if (!findMove(stateCopy, depth))
 				break;
 
@@ -109,7 +112,8 @@ public:
 			//			lastIterTrPosTblHitCount = mTrposTblHitCount;
 			//			lastIterTrposTblSize = mTrposTbl.size();
 			//			lastIterBranchingFactor = std::pow(mNodeCount, 1.0 / depth);
-			bestMove = mResults[0].bestMove;
+			if (depth >= 2)
+				mBestMove = mResults[0].bestMove;
 		}
 
 		//		log("nodeCount=" + lastIterNodeCount);
@@ -118,7 +122,7 @@ public:
 		//		log(String.format("t=%.3fms", (System.nanoTime() - mStartTime) * 1e-6));
 		//		log(String.format("branchingFactor=%.3g", lastIterBranchingFactor));
 
-		return bestMove;
+		return mBestMove;
 	}
 
 	void setLogger(Logger* logger)
@@ -369,7 +373,7 @@ private:
 			//				throw InterruptedException();
 			auto dur = std::chrono::high_resolution_clock::now() - mStartTime;
 			double t = std::chrono::duration_cast<std::chrono::microseconds>(dur).count() * 1e-6;
-			if (mTimeLimit != 0 && t > mTimeLimit /*&& mtree*/) { //TODO ensure at least 1 iter
+			if (mTimeLimit != 0 && t > mTimeLimit && mBestMove) {
 				//log(String.format("  time limit (%.1fms)", t * 1e3));
 				throw TimeLimitException();
 			}
