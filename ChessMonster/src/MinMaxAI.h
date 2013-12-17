@@ -96,7 +96,7 @@ public:
 
 	virtual Move getMove(const GameState& state) override
 	{
-		//mTree = nullptr;
+		mTree = SearchTreeNode();
 		mEvaluator.reset(state);
 		mRootScore = mEvaluator.getScore();
 		setEarlierStates(state);
@@ -135,10 +135,10 @@ public:
 		mLogger = logger;
 	}
 
-	//	Node* getSearchTree()
-	//	{
-	//		return mTree;
-	//	}
+	SearchTreeNode getSearchTree()
+	{
+		return std::move(mTree);
+	}
 
 	decltype(mNodeCount) nodeCount() const
 	{
