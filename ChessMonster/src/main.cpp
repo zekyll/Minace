@@ -13,6 +13,7 @@
 #include "../tests/ScoresTest.h"
 #include "../tests/MoveListTest.h"
 #include "../tests/TreeGeneratorTest.h"
+#include "../tests/UtilTest.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -34,6 +35,7 @@ int main(int argc, char** argv)
 	EvaluatorTest().run();
 	MinMaxAITest().run();
 	TreeGeneratorTest().run();
+	UtilTest().run();
 
 	return 0;
 }

@@ -38,6 +38,7 @@
       <itemPath>tests/ScoresTest.h</itemPath>
       <itemPath>tests/Test.h</itemPath>
       <itemPath>tests/TreeGeneratorTest.h</itemPath>
+      <itemPath>tests/UtilTest.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ttest" displayName="ttest" projectFiles="true">
       <itemPath>ttest/ttest.h</itemPath>
@@ -142,6 +143,8 @@
       </item>
       <item path="tests/TreeGeneratorTest.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="tests/UtilTest.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="ttest/ttest.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
@@ -238,6 +241,8 @@
       <item path="tests/Test.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/TreeGeneratorTest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/UtilTest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ttest/ttest.h" ex="false" tool="3" flavor2="0">
       </item>
