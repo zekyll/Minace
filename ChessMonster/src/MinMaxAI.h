@@ -140,6 +140,11 @@ public:
 	//		return mTree;
 	//	}
 
+	decltype(mNodeCount) nodeCount() const
+	{
+		return mNodeCount;
+	}
+
 	double effectiveBranchingFactor() const
 	{
 		return mEffectiveBranchingFactor;
@@ -343,11 +348,6 @@ private:
 	{
 		//		if (mLoggingEnabled)
 		//			logger.logMessage(msg);
-	}
-
-	decltype(mNodeCount) nodeCount()
-	{
-		return mNodeCount;
 	}
 
 	void setEarlierStates(const GameState& state)
