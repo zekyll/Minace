@@ -7,6 +7,7 @@
 #include "Scores.h"
 #include "Evaluator.h"
 #include "PerformanceTest.h"
+#include "SkillTest.h"
 #include "StdOutLogger.h"
 #include "../tests/Test.h"
 #include "../tests/EpdTest.h"
@@ -28,7 +29,7 @@ class App
 {
 private:
 
-	StdOutLogger stdOutLogger;
+	StdOutLogger mStdOutLogger;
 
 public:
 
@@ -36,9 +37,11 @@ public:
 	{
 		for (;;) {
 			std::cout << std::endl << "Choose:" << std::endl;
-			std::cout << "1. Run unit tests" << std::endl;
-			std::cout << "2. Run performance test" << std::endl;
-			std::cout << "3. Exit" << std::endl;
+			std::cout << "1. Unit tests" << std::endl;
+			std::cout << "2. Performance test" << std::endl;
+			std::cout << "3. Skill test: Easy positions" << std::endl;
+			std::cout << "4. Skill test: Zugzwang positions" << std::endl;
+			std::cout << "5. Exit" << std::endl;
 			std::cout << "> ";
 
 			int cmd;
@@ -52,6 +55,12 @@ public:
 				runPerformanceTest();
 				break;
 			case 3:
+				runSkillTest(SkillTest::EASY);
+				break;
+			case 4:
+				runSkillTest(SkillTest::ZUGZWANG);
+				break;
+			case 5:
 				return;
 			}
 		}
@@ -74,9 +83,14 @@ private:
 
 	void runPerformanceTest()
 	{
-		StdOutLogger stdOutLogger;
-		PerformanceTest pftest(stdOutLogger, 2, 5.0, true);
+		PerformanceTest pftest(mStdOutLogger, 2, 5.0, true);
 		pftest();
+	}
+
+	void runSkillTest(const SkillTest& skillTest)
+	{
+		MinMaxAI ai(nullptr, 10, 30, 0, 3);
+		skillTest.run(ai, mStdOutLogger);
 	}
 };
 

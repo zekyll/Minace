@@ -22,6 +22,7 @@
       <itemPath>src/Player.h</itemPath>
       <itemPath>src/Scores.h</itemPath>
       <itemPath>src/SearchTreeNode.h</itemPath>
+      <itemPath>src/SkillTest.h</itemPath>
       <itemPath>src/Sqr.h</itemPath>
       <itemPath>src/StateInfo.h</itemPath>
       <itemPath>src/StdOutLogger.h</itemPath>
@@ -116,6 +117,8 @@
       <item path="src/Scores.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/SearchTreeNode.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/SkillTest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -219,6 +222,8 @@
       <item path="src/Scores.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/SearchTreeNode.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/SkillTest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Sqr.h" ex="false" tool="3" flavor2="0">
       </item>
