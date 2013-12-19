@@ -29,4 +29,26 @@ inline double calculateEffectiveUniformBranchingFactor(double totalNodes, unsign
 	return bf;
 }
 
+/**
+ * Replaces all occurences of a in s with b.
+ */
+inline std::string stringReplace(const std::string& s, const std::string& a, const std::string& b)
+{
+	std::string r = s;
+
+	if (!a.length())
+		return r;
+
+	size_t idx = 0;
+	for (;; idx += b.length()) {
+		idx = r.find(a.c_str(), idx);
+		if (idx == std::string::npos)
+			break;
+		r.replace(idx, a.length(), b);
+	}
+
+	return r;
+}
+
+
 }
