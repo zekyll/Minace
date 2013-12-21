@@ -96,6 +96,11 @@ public:
 		return mPlayerPieces[player] & mPieces[piece] & sqr;
 	}
 
+	Mask operator()(Piece piece, Sqr sqr) const
+	{
+		return mPieces[piece] & sqr;
+	}
+
 	Mask operator()(Player player, Piece piece) const
 	{
 		return mPlayerPieces[player] & mPieces[piece];
@@ -122,6 +127,16 @@ public:
 		assert(sqr);
 		for (unsigned piece = 0; piece < Piece::COUNT; ++piece) {
 			if ((*this)(player, Piece(piece), sqr))
+				return Piece(piece);
+		}
+		return Piece::NONE;
+	}
+
+	Piece getPieceType(Sqr sqr) const
+	{
+		assert(sqr);
+		for (unsigned piece = 0; piece < Piece::COUNT; ++piece) {
+			if ((*this)(Piece(piece), sqr))
 				return Piece(piece);
 		}
 		return Piece::NONE;
