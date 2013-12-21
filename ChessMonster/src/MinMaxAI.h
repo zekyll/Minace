@@ -19,7 +19,7 @@
 
 namespace cm {
 
-class Logger; //TODO
+typedef void InfoCallback(int depth, int score, uint64_t nodes, const std::vector<Move>& pv);
 
 /**
  * AI based on minmax/negamax and alpha-beta pruning.
@@ -48,17 +48,17 @@ private:
 
 	double mTimeLimit;
 
-	Logger* mLogger;
+	std::function<InfoCallback> mInfoCallback;
 
 	unsigned mPly;
-
-	int mRootScore;
 
 	std::vector<StateInfo> mResults;
 
 	TreeGenerator mTreeGenerator;
 
 	SearchTreeNode mTree;
+
+	uint64_t mTotalNodeCount;
 
 	unsigned mNodeCount; //TODO 64-bit?
 
@@ -78,13 +78,13 @@ private:
 
 public:
 
-	MinMaxAI(Logger* logger, unsigned searchDepth, unsigned quiescenceSearchDepth, double timeLimit,
-			unsigned treeGenerationDepth)
+	MinMaxAI(std::function<InfoCallback> infoCallback, unsigned searchDepth,
+			unsigned quiescenceSearchDepth, double timeLimit, unsigned treeGenerationDepth)
 	: mSearchDepth(searchDepth),
 	mQuiescenceSearchDepth(quiescenceSearchDepth),
 	mEarlierStates(512),
 	mTimeLimit(timeLimit),
-	mLogger(logger),
+	mInfoCallback(infoCallback),
 	mPly(0),
 	mResults(searchDepth + 1 + quiescenceSearchDepth),
 	mTreeGenerator(treeGenerationDepth),
@@ -102,7 +102,6 @@ public:
 	{
 		mTree = SearchTreeNode();
 		mEvaluator.reset(state);
-		mRootScore = mEvaluator.getScore();
 		setEarlierStates(state);
 		mStartTime = std::chrono::high_resolution_clock::now();
 		mTrposTbl.clear();
@@ -111,6 +110,7 @@ public:
 		mBestMove = Move(); // none
 		GameState stateCopy = state;
 		mStopped = false;
+		mTotalNodeCount = 0;
 		//		unsigned lastIterNodeCount = 0, lastIterTrPosTblHitCount = 0, lastIterTrposTblSize = 0;
 		//		double lastIterBranchingFactor = 0.0;
 
@@ -133,11 +133,6 @@ public:
 		//		log(String.format("branchingFactor=%.3g", lastIterBranchingFactor));
 
 		return mBestMove;
-	}
-
-	void setLogger(Logger* logger)
-	{
-		mLogger = logger;
 	}
 
 	SearchTreeNode getSearchTree()
@@ -164,7 +159,7 @@ private:
 
 	bool findMove(GameState& state, int depth)
 	{
-		log("depth=" + std::to_string(depth));
+		//log("depth=" + std::to_string(depth));
 
 		unsigned prevNodeCount = mNodeCount;
 		mNodeCount = 0;
@@ -179,6 +174,7 @@ private:
 			return false;
 		}
 
+		mTotalNodeCount += mNodeCount;
 		mTree = mTreeGenerator.getTree();
 		mEffectiveBranchingFactor = (double) mNodeCount / (prevNodeCount ? prevNodeCount : 1);
 
@@ -319,13 +315,16 @@ private:
 		state.undoMove(move);
 		--mPly;
 
-		// Parannus edelliseeen parhaimpaan siirtoon verrattuna.
+		// Found better move.
 		if (score > mResults[mPly].score) {
 			mResults[mPly].score = score;
 			mResults[mPly].bestMove = move;
 			if (score > alpha) {
-				//				if (mPly == 0 && mLogger)
-				//					log("  " + Move.toString(move) + " " + (score - rootScore));
+				if (mPly == 0 && mInfoCallback) {
+					std::vector<Move> mvs;
+					mvs.push_back(move);
+					mInfoCallback(depth, score, mTotalNodeCount + mNodeCount, mvs);
+				}
 				if (score >= beta)
 					mResults[mPly].nodeType = NodeType::LOWER_BOUND;
 				else
@@ -352,12 +351,6 @@ private:
 				depth = std::max<int>(depth - NULL_MOVE_REDUCTION2, 1);
 		}
 		return depth;
-	}
-
-	void log(const std::string& msg)
-	{
-		//		if (mLoggingEnabled)
-		//			logger.logMessage(msg);
 	}
 
 	void setEarlierStates(const GameState& state)
@@ -395,10 +388,8 @@ private:
 				throw StoppedException();
 			auto dur = std::chrono::high_resolution_clock::now() - mStartTime;
 			double t = std::chrono::duration_cast<std::chrono::microseconds>(dur).count() * 1e-6;
-			if (mTimeLimit != 0 && t > mTimeLimit && mBestMove) {
-				//log(String.format("  time limit (%.1fms)", t * 1e3));
+			if (mTimeLimit != 0 && t > mTimeLimit && mBestMove)
 				throw StoppedException();
-			}
 		}
 	}
 };

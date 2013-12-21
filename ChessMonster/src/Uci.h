@@ -6,7 +6,9 @@
 #include "Move.h"
 #include <sstream>
 #include <memory>
+#include <vector>
 #include <thread>
+#include <chrono>
 
 namespace cm {
 
@@ -26,6 +28,8 @@ private:
 	std::unique_ptr<MinMaxAI> mAi;
 
 	std::unique_ptr<std::thread> mAiThread;
+
+	std::chrono::high_resolution_clock::time_point mStartTime;
 
 public:
 
@@ -166,18 +170,42 @@ private:
 
 		// Create AI
 		mLog << "Time: " << 0.001 * moveTime << std::endl;
-		mAi.reset(new MinMaxAI(nullptr, depth, 30, 0.001 * moveTime, 0));
+		auto cb = std::bind(&Uci::infoCallback, this, std::placeholders::_1, std::placeholders::_2,
+				std::placeholders::_3, std::placeholders::_4);
+		mAi.reset(new MinMaxAI(cb, depth, 30, 0.001 * moveTime, 0));
+		mStartTime = std::chrono::high_resolution_clock::now();
 
 		mAiThread.reset(new std::thread([this]() {
 			GameState mStateCopy = mPosition; // Copy in case mState is modified during getMove
 			Move bestMove = mAi->getMove(mStateCopy);
 
-			mOut << "bestmove " << bestMove.fromSqr().toStr() << bestMove.toSqr().toStr();
+			mOut << "bestmove " << moveToStr(bestMove) << std::endl;
 			mLog << "Best move: " << bestMove.toStr() << std::endl;
-			if (bestMove.isPromotion())
-				mOut << (char) std::tolower(bestMove.newType().toStr()[0]);
-			mOut << std::endl;
 		}));
+	}
+
+	void infoCallback(int depth, int score, long long nodes, const std::vector<Move>& pv)
+	{
+		mOut << "info";
+		mOut << " depth " << depth;
+		mOut << " score cp " << score;
+		mOut << " nodes " << nodes;
+		auto t = std::chrono::high_resolution_clock::now();
+		unsigned ms = std::chrono::duration_cast<std::chrono::milliseconds>(t - mStartTime).count();
+		mOut << " time " << ms;
+		//mOut << " nps " << ?;
+		mOut << " pv";
+		for (Move m : pv)
+			mOut << " " << moveToStr(m);
+		mOut << std::endl;
+	}
+
+	static std::string moveToStr(Move move)
+	{
+		std::string r = move.fromSqr().toStr() + move.toSqr().toStr();
+		if (move.isPromotion())
+			r += (char) std::tolower(move.newType().toStr()[0]);
+		return r;
 	}
 
 	Move parseMove(const std::string& s, const BitBoard& board)
