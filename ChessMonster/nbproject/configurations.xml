@@ -28,6 +28,7 @@
       <itemPath>src/StdOutLogger.h</itemPath>
       <itemPath>src/TranspositionTable.h</itemPath>
       <itemPath>src/TreeGenerator.h</itemPath>
+      <itemPath>src/Uci.h</itemPath>
       <itemPath>src/Util.h</itemPath>
       <itemPath>src/Zobrist.h</itemPath>
       <itemPath>src/main.cpp</itemPath>
@@ -75,7 +76,7 @@
       <compileType>
         <ccTool>
           <standard>8</standard>
-          <commandLine>-Wall -pedantic-errors</commandLine>
+          <commandLine>-Wall -pedantic-errors -pthread</commandLine>
         </ccTool>
       </compileType>
       <item path="src/App.h" ex="false" tool="3" flavor2="0">
@@ -130,6 +131,8 @@
       </item>
       <item path="src/TreeGenerator.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/Uci.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/Util.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Zobrist.h" ex="false" tool="3" flavor2="0">
@@ -171,7 +174,7 @@
         <ccTool>
           <developmentMode>5</developmentMode>
           <standard>8</standard>
-          <commandLine>-Wall -pedantic-errors -march=corei7 -mtune=corei7</commandLine>
+          <commandLine>-Wall -pedantic-errors -march=corei7 -mtune=corei7 -pthread</commandLine>
           <preprocessorList>
             <Elem>NDEBUG=1</Elem>
           </preprocessorList>
@@ -234,6 +237,8 @@
       <item path="src/TranspositionTable.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/TreeGenerator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/Uci.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Util.h" ex="false" tool="3" flavor2="0">
       </item>
