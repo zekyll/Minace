@@ -15,6 +15,7 @@
 #include <chrono>
 #include <exception>
 #include <cmath>
+#include <atomic>
 
 namespace cm {
 
@@ -27,7 +28,7 @@ class MinMaxAI : public GamePlayer
 {
 private:
 
-	class TimeLimitException : public std::exception
+	class StoppedException : public std::exception
 	{
 	};
 
@@ -73,6 +74,8 @@ private:
 
 	Move mBestMove;
 
+	std::atomic_bool mStopped;
+
 public:
 
 	MinMaxAI(Logger* logger, unsigned searchDepth, unsigned quiescenceSearchDepth, double timeLimit,
@@ -88,7 +91,8 @@ public:
 	mMoveLists(searchDepth + 1 + quiescenceSearchDepth),
 	mEvaluator(searchDepth + quiescenceSearchDepth),
 	mEffectiveBranchingFactor(0.0),
-	mBestMove()
+	mBestMove(),
+	mStopped(ATOMIC_FLAG_INIT)
 	{
 		if (searchDepth < 2)
 			throw std::invalid_argument("Search depth too small.");
@@ -106,6 +110,7 @@ public:
 		mEffectiveBranchingFactor = 0.0;
 		mBestMove = Move(); // none
 		GameState stateCopy = state;
+		mStopped = false;
 		//		unsigned lastIterNodeCount = 0, lastIterTrPosTblHitCount = 0, lastIterTrposTblSize = 0;
 		//		double lastIterBranchingFactor = 0.0;
 
@@ -150,6 +155,11 @@ public:
 		return mEffectiveBranchingFactor;
 	}
 
+	void stop()
+	{
+		mStopped = true;
+	}
+
 private:
 
 	bool findMove(GameState& state, int depth)
@@ -165,7 +175,7 @@ private:
 
 		try {
 			createNodeAndSearch(depth, Scores::MIN, Scores::MAX, state, Move());
-		} catch (TimeLimitException e) {
+		} catch (StoppedException& e) {
 			return false;
 		}
 
@@ -381,13 +391,13 @@ private:
 	void checkTimeLimit()
 	{
 		if ((mNodeCount & 0xfff) == 0) {
-			//			if (Thread.interrupted())
-			//				throw InterruptedException();
+			if (mStopped)
+				throw StoppedException();
 			auto dur = std::chrono::high_resolution_clock::now() - mStartTime;
 			double t = std::chrono::duration_cast<std::chrono::microseconds>(dur).count() * 1e-6;
 			if (mTimeLimit != 0 && t > mTimeLimit && mBestMove) {
 				//log(String.format("  time limit (%.1fms)", t * 1e3));
-				throw TimeLimitException();
+				throw StoppedException();
 			}
 		}
 	}
