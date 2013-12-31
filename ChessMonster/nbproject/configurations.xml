@@ -39,6 +39,7 @@
       <itemPath>tests/GameStateTest.h</itemPath>
       <itemPath>tests/MinMaxAITest.h</itemPath>
       <itemPath>tests/MoveListTest.h</itemPath>
+      <itemPath>tests/PstreamTest.h</itemPath>
       <itemPath>tests/ScoresTest.h</itemPath>
       <itemPath>tests/Test.h</itemPath>
       <itemPath>tests/TreeGeneratorTest.h</itemPath>
@@ -58,6 +59,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <itemPath>src/Pstream.h</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>src</Elem>
@@ -114,6 +116,8 @@
       </item>
       <item path="src/Player.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/Pstream.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/Scores.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/SearchTreeNode.h" ex="false" tool="3" flavor2="0">
@@ -147,6 +151,8 @@
       <item path="tests/MinMaxAITest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/MoveListTest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/PstreamTest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/ScoresTest.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -220,6 +226,8 @@
       </item>
       <item path="src/Player.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/Pstream.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/Scores.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/SearchTreeNode.h" ex="false" tool="3" flavor2="0">
@@ -253,6 +261,8 @@
       <item path="tests/MinMaxAITest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/MoveListTest.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/PstreamTest.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/ScoresTest.h" ex="false" tool="3" flavor2="0">
       </item>
