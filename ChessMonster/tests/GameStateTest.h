@@ -85,6 +85,14 @@ private:
 		TTEST_EQUAL(s3, GameState(BitBoard(epd), Player::BLACK, Mask(), Sqr("h3")));
 	}
 
+	TTEST_CASE("Reads half move clock from FEN.")
+	{
+		std::string epd = "8/8/8/8/8/8/8/8 w - - 7 22";
+		GameState s(epd);
+		TTEST_EQUAL(s.getHalfMoveClock(), 7);
+		TTEST_EQUAL(s, GameState(BitBoard(epd), Player::WHITE, Mask(), Sqr::NONE, 7));
+	}
+
 	TTEST_CASE("MakeMove() changes board layout.")
 	{
 		GameState s("Kc3 Nd2", "Kf5 d7", Player::WHITE);

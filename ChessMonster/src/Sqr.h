@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <stdexcept>
 
 namespace cm {
 
@@ -33,14 +34,13 @@ public:
 
 	Sqr_t(const std::string& str)
 	{
-		mValue = str[0] - 'a';
-		mValue += ('8' - str[1]) * 8;
+		size_t idx = 0;
+		init(str, idx);
 	}
 
 	Sqr_t(const std::string& str, size_t& idx)
 	{
-		mValue = str[idx++] - 'a';
-		mValue += ('8' - str[idx++]) * 8;
+		init(str, idx);
 	}
 
 	constexpr unsigned row() const
@@ -77,6 +77,17 @@ public:
 	{
 		const char s[] = {(char) ('a' + col()), (char) ('8' - row()), '\0'};
 		return s;
+	}
+
+private:
+
+	void init(const std::string& str, size_t& idx)
+	{
+		if (idx >= str.size() - 1 || str[idx] < 'a' || str[idx] > 'h' || str[idx + 1] < '1'
+				|| str[idx + 1] > '8')
+			throw std::invalid_argument("Invalid square descriptor.");
+		mValue = str[idx++] - 'a';
+		mValue += ('8' - str[idx++]) * 8;
 	}
 };
 

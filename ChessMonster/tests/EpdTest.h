@@ -56,6 +56,12 @@ private:
 		TTEST_EQUAL(Epd("8/8/8/8/1P6/8/8/3K4 b - b3").enpassantSqr(), Sqr("b3"));
 		TTEST_EQUAL(Epd("8/8/8/7p/8/8/8/3K4 w KQkq h6").enpassantSqr(), Sqr("h6"));
 	}
+
+	TTEST_CASE("Handles a FEN string with move counts.")
+	{
+		TTEST_EQUAL(Epd("8/8/8/8/1P6/8/8/3K4 b - b3 7 22").halfMoveClock(), 7);
+		TTEST_EQUAL(Epd("8/8/8/8/1P6/8/8/3K4 b - b3 7 22").fullMoveNumber(), 22);
+	}
 };
 
 }

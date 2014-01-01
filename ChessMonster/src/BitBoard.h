@@ -34,23 +34,23 @@ public:
 		unsigned i = idx ? *idx : 0;
 		for (unsigned row = 0, col = 0; row < 7 || col < 8; ++i) {
 			if (i >= epd.size())
-				throw std::invalid_argument("Invalid EPD string.");
+				throw std::invalid_argument("Invalid position description.");
 			if (epd[i] >= '1' && epd[i] <= '8') {
 				col += epd[i] - '0';
 			} else if (epd[i] == '/') {
 				if (col != 8)
-					throw std::invalid_argument("Invalid EPD string.");
+					throw std::invalid_argument("Invalid position description.");
 				++row;
 				col = 0;
 			} else if (isalpha(epd[i])) {
 				Piece piece(epd.substr(i, 1));
 				if (!piece)
-					throw std::invalid_argument("Invalid EPD string.");
+					throw std::invalid_argument("Invalid position description.");
 				Player player(!!islower(epd[i]));
 				addPiece(player, piece, Sqr(row, col));
 				++col;
 			} else {
-				throw std::invalid_argument("Invalid EPD string.");
+				throw std::invalid_argument("Invalid position description.");
 			}
 		}
 		if (idx)

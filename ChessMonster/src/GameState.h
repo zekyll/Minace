@@ -50,19 +50,21 @@ public:
 	}
 
 	GameState_t(const Epd& epd)
-	: GameState_t(epd.board(), epd.startingPlayer(), epd.castlingRights(), epd.enpassantSqr())
+	: GameState_t(epd.board(), epd.startingPlayer(), epd.castlingRights(), epd.enpassantSqr(),
+	epd.halfMoveClock())
 	{
 	}
 
 	GameState_t(std::string whitePieces, std::string blackPieces,
 			Player startingPlayer = Player::WHITE, Mask castlingRights = Mask(),
-			Sqr enPassantSqr = Sqr::NONE)
-	: GameState_t(BitBoard(whitePieces, blackPieces), startingPlayer, castlingRights, enPassantSqr)
+			Sqr enPassantSqr = Sqr::NONE, unsigned halfMoveClock = 0)
+	: GameState_t(BitBoard(whitePieces, blackPieces), startingPlayer, castlingRights, enPassantSqr,
+	halfMoveClock)
 	{
 	}
 
 	GameState_t(const BitBoard& board, Player startingPlayer = Player::WHITE,
-			Mask castlingRights = Mask(), Sqr enPassantSqr = Sqr::NONE)
+			Mask castlingRights = Mask(), Sqr enPassantSqr = Sqr::NONE, unsigned halfMoveClock = 0)
 	: mBoard(board), mPlayer(startingPlayer), mPly(0), mHist(1)
 	{
 		if (enPassantSqr && (!(Mask(enPassantSqr) & Mask(0xFF0000ULL << 24 * mPlayer))
@@ -72,7 +74,7 @@ public:
 		mHist[0].zobristCode = Zobrist::EMPTY_RND;
 		mHist[0].enPassantSqr = enPassantSqr;
 		mHist[0].castlingRights = 0;
-		mHist[0].halfMoveClock = 0;
+		mHist[0].halfMoveClock = halfMoveClock;
 
 		if (startingPlayer == Player::BLACK)
 			mHist[0].zobristCode ^= Zobrist::PLAYER_RND;
