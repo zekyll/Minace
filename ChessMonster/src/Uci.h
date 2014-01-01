@@ -118,7 +118,7 @@ private:
 		if (ss >> movesCmd && movesCmd == "moves") {
 			mLog << "Moves:";
 			while (ss >> moveStr) {
-				Move move = parseMove(moveStr, mPosition.board());
+				Move move(moveStr, mPosition.board());
 				mLog << " " << move.toStr();
 				mPosition.makeMove(move);
 			}
@@ -185,7 +185,7 @@ private:
 			GameState mStateCopy = mPosition; // Copy in case mState is modified during getMove
 			Move bestMove = mAi->getMove(mStateCopy, tc);
 
-					mOut << "bestmove " << moveToStr(bestMove) << std::endl;
+					mOut << "bestmove " << bestMove.toStr(true) << std::endl;
 					mLog << "Best move: " << bestMove.toStr() << std::endl;
 		}));
 	}
@@ -202,40 +202,8 @@ private:
 		//mOut << " nps " << ?;
 		mOut << " pv";
 		for (Move m : pv)
-			mOut << " " << moveToStr(m);
+			mOut << " " << m.toStr(true);
 		mOut << std::endl;
-	}
-
-	static std::string moveToStr(Move move)
-	{
-		std::string r = move.fromSqr().toStr() + move.toSqr().toStr();
-		if (move.isPromotion())
-			r += (char) std::tolower(move.newType().toStr()[0]);
-		return r;
-	}
-
-	Move parseMove(const std::string& s, const BitBoard& board)
-	{
-		size_t i = 0;
-
-		// From
-		Sqr fromSqr(s, i);
-		Piece pieceType = board.getPieceType(fromSqr);
-
-		// To
-		Sqr toSqr(s, i);
-		Piece capturedType = board.getPieceType(toSqr);
-
-		// En passant
-		if (pieceType == Piece::PAWN && fromSqr.row() != toSqr.row() && !capturedType)
-			capturedType = Piece::PAWN;
-
-		// Promotion type
-		Piece newType = pieceType;
-		if (i != s.length())
-			newType = s.substr(i++, 1);
-
-		return Move(fromSqr, toSqr, pieceType, capturedType, newType);
 	}
 
 	void cleanup()
