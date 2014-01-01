@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MinMaxAI.h"
+#include "Epd.h"
 #include "BitBoard.h"
 #include "GameState.h"
 #include "Move.h"
@@ -96,17 +97,33 @@ private:
 
 	void position(std::stringstream& ss)
 	{
-		mPosition = GameState();
-		std::string startpos, movesCmd, moveStr;
-		ss >> startpos >> movesCmd;
-
-		mLog << "Moves:";
-		while (ss >> moveStr) {
-			Move move = parseMove(moveStr, mPosition.board());
-			mLog << " " << move.toStr();
-			mPosition.makeMove(move);
+		// Starting position is either "startpos" or FEN string.
+		std::string startPos;
+		ss >> startPos;
+		if (startPos == "startpos") {
+			mPosition = GameState();
+		} else if (startPos == "fen") {
+			ss >> startPos;
+			std::string tmp;
+			for (int i = 0; i < 5; ++i) {
+				ss >> tmp;
+				startPos += " " + tmp;
+			}
+			mPosition = GameState(Epd(startPos));
+		} else {
+			mPosition = GameState();
 		}
-		mLog << std::endl;
+
+		std::string movesCmd, moveStr;
+		if (ss >> movesCmd && movesCmd == "moves") {
+			mLog << "Moves:";
+			while (ss >> moveStr) {
+				Move move = parseMove(moveStr, mPosition.board());
+				mLog << " " << move.toStr();
+				mPosition.makeMove(move);
+			}
+			mLog << std::endl;
+		}
 
 		mLog << "Position:" << std::endl << mPosition << std::endl;
 	}
