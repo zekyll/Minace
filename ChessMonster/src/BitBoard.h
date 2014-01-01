@@ -170,10 +170,31 @@ public:
 		return !(*this == rhs);
 	}
 
-	std::string toStr() const
+	std::string toStr(bool fen = false) const
 	{
 		std::stringstream ss;
-		ss << *this;
+		if (fen) {
+			for (unsigned row = 0; row < 8; ++row) {
+				unsigned emptyCount = 0;
+				for (unsigned col = 0; col < 8; ++col) {
+					Sqr sqr(row, col);
+					if ((*this)(sqr)) {
+						if (emptyCount)
+							ss << emptyCount;
+							ss << getPieceType(sqr).toStr(getPlayer(sqr), true);
+						emptyCount = 0;
+					} else {
+						++emptyCount;
+					}
+				}
+				if (emptyCount)
+					ss << emptyCount;
+				if (row < 7)
+					ss << "/";
+			}
+		} else {
+			ss << *this;
+		}
 		return ss.str();
 	}
 

@@ -117,7 +117,7 @@ private:
 	{
 		std::string epd = "8/8/8/8/8/8/8/8 w - - 7 22";
 		GameState s(epd);
-		TTEST_EQUAL(s.getHalfMoveClock(), 7);
+		TTEST_EQUAL(s.halfMoveClock(), 7);
 		TTEST_EQUAL(s, GameState(BitBoard(epd), Player::WHITE, Mask(), Sqr::NONE, 7));
 	}
 
@@ -314,7 +314,41 @@ private:
 					"Kg8 Qd8 Ra8 Rf8 Ba5 Bb5 Nf6 Nh3 a7 a2 b4 c5 d7 e5 g7 h7",
 					Player::BLACK, ~Mask());
 		}
+	}
 
+	TTEST_CASE("Output to FEN string (starting position).")
+	{
+		GameState s;
+		TTEST_EQUAL(s.toStr(true), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+
+	TTEST_CASE("Output to FEN string (black to move, no castling rights).")
+	{
+		GameState s("8/8/8/8/8/8/8/8 b - - 0 1");
+		TTEST_EQUAL(s.toStr(true), "8/8/8/8/8/8/8/8 b - - 0 1");
+	}
+
+	TTEST_CASE("Output to FEN string (partial castling rights).")
+	{
+		GameState s("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Kq - 0 1");
+		TTEST_EQUAL(s.toStr(true), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Kq - 0 1");
+		GameState s2("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Qk - 0 1");
+		TTEST_EQUAL(s2.toStr(true), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Qk - 0 1");
+	}
+
+	TTEST_CASE("Output to FEN string (en passant square, half move clock).")
+	{
+		GameState s("8/8/8/1p6/8/8/8/8 w - b6 4 1");
+		TTEST_EQUAL(s.toStr(true), "8/8/8/1p6/8/8/8/8 w - b6 4 1");
+	}
+
+	TTEST_CASE("Output to FEN string (full move number incremented every second move).")
+	{
+		GameState s;
+		s.makeMove(Move("e2-e4"));
+		TTEST_EQUAL(s.toStr(true), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
+		s.makeMove(Move("c7-c5"));
+		TTEST_EQUAL(s.toStr(true), "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2");
 	}
 };
 

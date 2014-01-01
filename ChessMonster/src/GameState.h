@@ -122,7 +122,7 @@ public:
 		return mHist[mPly].castlingRights;
 	}
 
-	unsigned getHalfMoveClock() const
+	unsigned halfMoveClock() const
 	{
 		return mHist[mPly].halfMoveClock;
 	}
@@ -338,6 +338,42 @@ public:
 		for (unsigned i = 0; i < mPly; ++i)
 			states.push_back(mHist[i].zobristCode);
 		return states;
+	}
+
+	std::string toStr(bool fen = false) const
+	{
+		std::stringstream ss;
+		if (fen) {
+			// Board
+			ss << mBoard.toStr(true);
+
+			// Starting player
+			ss << " " << (mPlayer == Player::WHITE ? "w" : "b");
+
+			// Castling rights
+			ss << " ";
+			Mask cr = castlingRights();
+			if (cr) {
+				ss << (cr & Sqr(63) ? "K" : "");
+				ss << (cr & Sqr(56) ? "Q" : "");
+				ss << (cr & Sqr(7) ? "k" : "");
+				ss << (cr & Sqr(0) ? "q" : "");
+			} else {
+				ss << "-";
+			}
+
+			// En passant sqr
+			ss << " " << (enPassantSqr() ? enPassantSqr().toStr() : "-");
+
+			// Half move clock
+			ss << " " << halfMoveClock();
+
+			// Full move number
+			ss << " " << mPly / 2 + 1;
+		} else {
+			ss << *this;
+		}
+		return ss.str();
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const GameState_t& state)
