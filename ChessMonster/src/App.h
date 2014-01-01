@@ -18,7 +18,7 @@
 #include "../tests/MoveListTest.h"
 #include "../tests/TreeGeneratorTest.h"
 #include "../tests/UtilTest.h"
-#include "../tests/PstreamTest.h"
+#include "../tests/ProcessTest.h"
 #include <iostream>
 
 namespace cm {

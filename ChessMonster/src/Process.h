@@ -195,6 +195,14 @@ public:
 		}
 	}
 
+	void closeStdOut()
+	{
+		if (mFdOut >= 0) {
+			close(mFdOut);
+			mFdOut = -1;
+		}
+	}
+
 	int wait()
 	{
 		if (mFdIn >= 0) {
@@ -270,25 +278,79 @@ protected:
 };
 
 /*
- * Iostream implementation that spawns a new process, writes to its stdin and reads from its
- * stdout.
+ * Ostream implementation that writes to the standard input of a child process.
  */
-class Pstream : public std::basic_iostream<char>
+class Postream : public std::ostream
 {
 private:
-	PstreamBuf mBuf;
+	PstreamBuf& mBuf;
 public:
 
-	explicit Pstream(const std::string& path, const std::vector<std::string>& args =
-			std::vector<std::string>())
-	: mBuf(path, args)
+	explicit Postream(PstreamBuf& buf)
+	: mBuf(buf)
 	{
 		rdbuf(&mBuf);
 	}
 
-	void closeStdIn()
+	void close()
 	{
 		mBuf.closeStdIn();
+	}
+
+	Postream(const Postream &) = delete;
+	Postream &operator=(const Postream &) = delete;
+};
+
+/*
+ * Istream implementation that reads from the standard output of a child process.
+ */
+class Pistream : public std::istream
+{
+private:
+	PstreamBuf& mBuf;
+public:
+
+	explicit Pistream(PstreamBuf& buf)
+	: mBuf(buf)
+	{
+		rdbuf(&mBuf);
+	}
+
+	void close()
+	{
+		mBuf.closeStdOut();
+	}
+
+	Pistream(const Pistream &) = delete;
+	Pistream &operator=(const Pistream &) = delete;
+};
+
+/*
+ * Abstraction of a child process. Creates streams for the standard input/output. Wait
+ * must always be called when ending the process.
+ */
+class Process : public std::basic_iostream<char>
+{
+private:
+	PstreamBuf mBuf;
+	Postream mStdIn;
+	Pistream mStdOut;
+public:
+
+	explicit Process(const std::string& path, const std::vector<std::string>& args =
+			std::vector<std::string>())
+	: mBuf(path, args), mStdIn(mBuf), mStdOut(mBuf)
+	{
+	}
+
+	Postream& in()
+	{
+		return mStdIn;
+	}
+
+	Pistream& out()
+	{
+		return mStdOut;
 	}
 
 	int wait()
@@ -296,8 +358,8 @@ public:
 		return mBuf.wait();
 	}
 
-	Pstream(const Pstream &) = delete;
-	Pstream &operator=(const Pstream &) = delete;
+	Process(const Process &) = delete;
+	Process &operator=(const Process &) = delete;
 };
 
 }

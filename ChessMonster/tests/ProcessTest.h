@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../src/Pstream.h"
+#include "../src/Process.h"
 #include "../ttest/ttest.h"
 #include <string>
 
@@ -14,20 +14,20 @@ private:
 
 	TTEST_CASE("Reading and writing works when running /bin/cat")
 	{
-		Pstream ps("/bin/cat",{"--show-ends"});
-		ps << "abc def\nghi" << std::endl;
+		Process p("/bin/cat",{"--show-ends"});
+		p.in() << "abc def\nghi" << std::endl;
 		std::string s;
-		getline(ps, s);
+		getline(p.out(), s);
 		TTEST_EQUAL(s, "abc def$");
-		ps.wait();
-		getline(ps, s);
+		p.wait();
+		getline(p.out(), s);
 		TTEST_EQUAL(s, "ghi$");
 	}
 
 	TTEST_CASE("Throws if executable file not found.")
 	{
 		try {
-			Pstream ps("/file-not-found");
+			Process p("/file-not-found");
 			throw ttest::TestException("Exception not thrown by constructor.");
 		} catch (std::system_error& e) {
 		}
