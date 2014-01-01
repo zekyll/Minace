@@ -31,14 +31,14 @@ public:
 	{
 	}
 
-	void run(GamePlayer& ai, Logger& logger) const
+	void run(GamePlayer& ai, const TimeConstraint& tc, Logger& logger) const
 	{
 		logger.logMessage("Running skill test...");
 
 		unsigned count[2] = {};
 
 		for (const auto& tp : mTestPositions) {
-			bool r = testPos(tp.first, tp.second, ai, logger);
+			bool r = testPos(tp.first, tp.second, ai, tc, logger);
 			++count[r];
 		}
 
@@ -48,10 +48,11 @@ public:
 
 private:
 
-	bool testPos(const Epd& epd, Move bestMove, GamePlayer& ai, Logger& logger) const
+	bool testPos(const Epd& epd, Move bestMove, GamePlayer& ai, const TimeConstraint& tc,
+			Logger& logger) const
 	{
 		GameState state(epd);
-		Move move = ai.getMove(state);
+		Move move = ai.getMove(state, tc);
 		if (move == bestMove) {
 			logger.logMessage(epd.string() + " [OK]");
 			return true;

@@ -8,7 +8,7 @@ namespace cm {
 class GamePlayer
 {
 public:
-	virtual Move getMove(const GameState& state) = 0;
+	virtual Move getMove(const GameState& state, const TimeConstraint& tc) = 0;
 };
 
 }

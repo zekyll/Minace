@@ -26,6 +26,7 @@
       <itemPath>src/Sqr.h</itemPath>
       <itemPath>src/StateInfo.h</itemPath>
       <itemPath>src/StdOutLogger.h</itemPath>
+      <itemPath>src/TimeConstraint.h</itemPath>
       <itemPath>src/TranspositionTable.h</itemPath>
       <itemPath>src/TreeGenerator.h</itemPath>
       <itemPath>src/Uci.h</itemPath>
@@ -129,6 +130,8 @@
       <item path="src/StateInfo.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/StdOutLogger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/TimeConstraint.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/TranspositionTable.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -239,6 +242,8 @@
       <item path="src/StateInfo.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/StdOutLogger.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/TimeConstraint.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/TranspositionTable.h" ex="false" tool="3" flavor2="0">
       </item>

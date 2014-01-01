@@ -91,8 +91,8 @@ private:
 
 	void runSkillTest(const SkillTest& skillTest)
 	{
-		MinMaxAI ai(nullptr, 10, 30, 0, 3);
-		skillTest.run(ai, mStdOutLogger);
+		MinMaxAI ai;
+		skillTest.run(ai, TimeConstraint(10), mStdOutLogger);
 	}
 };
 

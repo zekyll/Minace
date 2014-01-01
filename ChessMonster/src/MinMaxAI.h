@@ -1,5 +1,6 @@
 #pragma once
 
+#include "TimeConstraint.h"
 #include "TranspositionTable.h"
 #include "StateInfo.h"
 #include "Evaluator.h"
@@ -38,7 +39,7 @@ private:
 
 	static constexpr size_t MAX_TRANSPOSITION_TABLE_SIZE = 1024 * 1024;
 
-	unsigned mSearchDepth;
+	static constexpr unsigned MAX_SEARCH_DEPTH = 30;
 
 	unsigned mQuiescenceSearchDepth;
 
@@ -46,7 +47,7 @@ private:
 
 	TranspositionTable<uint64_t> mEarlierStates;
 
-	double mTimeLimit;
+	TimeConstraint mTimeConstraint;
 
 	std::function<InfoCallback> mInfoCallback;
 
@@ -78,27 +79,23 @@ private:
 
 public:
 
-	MinMaxAI(std::function<InfoCallback> infoCallback, unsigned searchDepth,
-			unsigned quiescenceSearchDepth, double timeLimit, unsigned treeGenerationDepth)
-	: mSearchDepth(searchDepth),
-	mQuiescenceSearchDepth(quiescenceSearchDepth),
+	MinMaxAI(std::function<InfoCallback> infoCallback = nullptr,
+			unsigned quiescenceSearchDepth = 30, unsigned treeGenerationDepth = 0)
+	: mQuiescenceSearchDepth(quiescenceSearchDepth),
 	mEarlierStates(512),
-	mTimeLimit(timeLimit),
 	mInfoCallback(infoCallback),
 	mPly(0),
-	mResults(searchDepth + 1 + quiescenceSearchDepth),
+	mResults(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth),
 	mTreeGenerator(treeGenerationDepth),
-	mMoveLists(searchDepth + 1 + quiescenceSearchDepth),
-	mEvaluator(searchDepth + quiescenceSearchDepth),
+	mMoveLists(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth),
+	mEvaluator(MAX_SEARCH_DEPTH + quiescenceSearchDepth),
 	mEffectiveBranchingFactor(0.0),
 	mBestMove(),
 	mStopped(ATOMIC_FLAG_INIT)
 	{
-		if (searchDepth < 2)
-			throw std::invalid_argument("Search depth too small.");
 	}
 
-	virtual Move getMove(const GameState& state) override
+	virtual Move getMove(const GameState& state, const TimeConstraint& tc) override
 	{
 		mTree = SearchTreeNode();
 		mEvaluator.reset(state);
@@ -111,10 +108,13 @@ public:
 		GameState stateCopy = state;
 		mStopped = false;
 		mTotalNodeCount = 0;
+		setupTimeConstraint(tc, state.activePlayer());
 		//		unsigned lastIterNodeCount = 0, lastIterTrPosTblHitCount = 0, lastIterTrposTblSize = 0;
 		//		double lastIterBranchingFactor = 0.0;
 
-		for (int depth = 1; (unsigned) depth <= mSearchDepth; ++depth) {
+		unsigned maxDepth = std::min((unsigned)MAX_SEARCH_DEPTH,
+				mTimeConstraint.depth ? mTimeConstraint.depth : (unsigned)-1);
+		for (int depth = 1; (unsigned) depth <= maxDepth; ++depth) {
 			if (!findMove(stateCopy, depth))
 				break;
 
@@ -388,8 +388,27 @@ private:
 				throw StoppedException();
 			auto dur = std::chrono::high_resolution_clock::now() - mStartTime;
 			double t = std::chrono::duration_cast<std::chrono::microseconds>(dur).count() * 1e-6;
-			if (mTimeLimit != 0 && t > mTimeLimit && mBestMove)
+			if (mTimeConstraint.time != 0 && t > mTimeConstraint.time && mBestMove)
 				throw StoppedException();
+		}
+	}
+
+	void setupTimeConstraint(const TimeConstraint& tc, Player player)
+	{
+		mTimeConstraint = tc;
+
+		// If clock is used then allocate a time slot based on remaining time. The actual time
+		// limit is then the minimum of the time slot and the hard limit (tc.time).
+		if (mTimeConstraint.clock[player]) {
+			double timeSlot = mTimeConstraint.clock[player] ? mTimeConstraint.clock[player] : 100.0;
+			int moves = mTimeConstraint.clockMovesLeft ? mTimeConstraint.clockMovesLeft : 30;
+			timeSlot += moves * mTimeConstraint.clockIncrement[player];
+			timeSlot /= moves + 1;
+
+			if (mTimeConstraint.time)
+				mTimeConstraint.time = std::min(mTimeConstraint.time, timeSlot);
+			else
+				mTimeConstraint.time = timeSlot;
 		}
 	}
 };

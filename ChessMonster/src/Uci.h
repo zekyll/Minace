@@ -131,35 +131,37 @@ private:
 	void go(std::stringstream& ss)
 	{
 		// Parameters
-		double wtime = 0, btime = 0, winc = 0, binc = 0, moveTime = 0;
-		int depth = 99;
-		long long nodes = -1;
-		int movesToGo = 0;
+		TimeConstraint tc;
 		bool infinite = false/*, ponder = false, mate = false*/;
+
+		auto getTime = [&](double& val) {
+			ss >> val;
+			val *= 0.001;
+		};
 
 		// Read go parameters
 		std::string cmd;
 		while (ss >> cmd) {
 			if (cmd == "wtime") {
-				ss >> wtime;
+				getTime(tc.clock[Player::WHITE]);
 			} else if (cmd == "btime") {
-				ss >> btime;
+				getTime(tc.clock[Player::BLACK]);
 			} else if (cmd == "winc") {
-				ss >> winc;
+				getTime(tc.clockIncrement[Player::WHITE]);
 			} else if (cmd == "binc") {
-				ss >> binc;
+				getTime(tc.clockIncrement[Player::BLACK]);
 			} else if (cmd == "movetime") {
-				ss >> moveTime;
+				getTime(tc.time);
 			} else if (cmd == "infinite") {
 				infinite = true;
 			} else if (cmd == "movestogo") {
-				ss >> movesToGo;
+				ss >> tc.clockMovesLeft;
 			} else if (cmd == "depth") {
-				ss >> depth;
+				ss >> tc.depth;
 			} else if (cmd == "nodes") {
-				ss >> nodes;
+				ss >> tc.nodes;
 			} else if (cmd == "searchmoves") {
-				ss >> moveTime;
+				throw std::runtime_error("searchmoves not supported yet");
 			} else if (cmd == "ponder") {
 				//ponder = true;
 			} else if (cmd == "mate") {
@@ -167,37 +169,24 @@ private:
 			}
 		}
 
-		// Time control
-		if (!movesToGo) {
-			movesToGo = 30;
-		}
-		if (infinite) {
-			moveTime = 0.0;
-		} else {
-			int time = mPosition.activePlayer() == Player::WHITE ? wtime : btime;
-			int inc = mPosition.activePlayer() == Player::WHITE ? winc : binc;
-			if (time == 0.0)
-				time = 100.0;
-			time += inc * movesToGo;
-			moveTime = time / (movesToGo + 1);
-		}
+		if (infinite)
+			tc = TimeConstraint();
 
 		// Wait for previous thread to end.
 		cleanup();
 
 		// Create AI
-		mLog << "Time: " << 0.001 * moveTime << std::endl;
 		auto cb = std::bind(&Uci::infoCallback, this, std::placeholders::_1, std::placeholders::_2,
 				std::placeholders::_3, std::placeholders::_4);
-		mAi.reset(new MinMaxAI(cb, depth, 30, 0.001 * moveTime, 0));
+		mAi.reset(new MinMaxAI(cb));
 		mStartTime = std::chrono::high_resolution_clock::now();
 
-		mAiThread.reset(new std::thread([this]() {
+		mAiThread.reset(new std::thread([this, tc]() {
 			GameState mStateCopy = mPosition; // Copy in case mState is modified during getMove
-			Move bestMove = mAi->getMove(mStateCopy);
+			Move bestMove = mAi->getMove(mStateCopy, tc);
 
-			mOut << "bestmove " << moveToStr(bestMove) << std::endl;
-			mLog << "Best move: " << bestMove.toStr() << std::endl;
+					mOut << "bestmove " << moveToStr(bestMove) << std::endl;
+					mLog << "Best move: " << bestMove.toStr() << std::endl;
 		}));
 	}
 

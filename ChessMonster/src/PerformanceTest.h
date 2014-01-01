@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "GameGenerator.h"
 #include "Util.h"
+#include "TimeConstraint.h"
 #include <random>
 #include <cstdint>
 #include <cmath>
@@ -48,10 +49,11 @@ public:
 			mTotalNodes = 0;
 			mTotalEbf = 0;
 
-			MinMaxAI ai(nullptr, depth, mQs * 30, 0.0, 0);
+			MinMaxAI ai(nullptr, mQs * 30, 0);
+			TimeConstraint tc(depth);
 			n = 0;
 			while (totalTime < mLength) {
-				totalTime += runSingleTest(ai, rng());
+				totalTime += runSingleTest(ai, rng(), tc);
 				++n;
 			}
 
@@ -64,12 +66,12 @@ public:
 		mLogger.logMessage("Test done.");
 	}
 
-	double runSingleTest(MinMaxAI& ai, uint64_t seed)
+	double runSingleTest(MinMaxAI& ai, uint64_t seed, const TimeConstraint& tc)
 	{
 		GameState state = GameGenerator::createGame(seed);
 		
 		auto start = std::chrono::high_resolution_clock::now();
-		if (!ai.getMove(state))
+		if (!ai.getMove(state, tc))
 			throw 0;
 		mTotalNodes += ai.nodeCount();
 		mTotalEbf += ai.effectiveBranchingFactor();
