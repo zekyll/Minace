@@ -68,7 +68,7 @@ public:
 	: mBoard(board), mPlayer(startingPlayer), mPly(0), mHist(1)
 	{
 		if (enPassantSqr && (!(Mask(enPassantSqr) & Mask(0xFF0000ULL << 24 * mPlayer))
-				|| mBoard(~mPlayer, Sqr(enPassantSqr + 8 * ~mPlayer))))
+				|| !mBoard(~mPlayer, Piece::PAWN, Sqr(enPassantSqr + 8 - 16 * mPlayer))))
 			throw std::invalid_argument("Invalid en passant square.");
 
 		mHist[0].zobristCode = Zobrist::EMPTY_RND;

@@ -74,7 +74,7 @@ private:
 		TTEST_EQUAL(s.enPassantSqr(), Sqr::NONE);
 		TTEST_EQUAL(s, GameState(BitBoard(epd), Player::WHITE));
 
-		epd = "8/8/1p6/8/8/8/8/8 w - b6";
+		epd = "8/8/8/1p6/8/8/8/8 w - b6";
 		GameState s2(epd);
 		TTEST_EQUAL(s2.enPassantSqr(), Sqr("b6"));
 		TTEST_EQUAL(s2, GameState(BitBoard(epd), Player::WHITE, Mask(), Sqr("b6")));
@@ -83,6 +83,34 @@ private:
 		GameState s3(epd);
 		TTEST_EQUAL(s3.enPassantSqr(), Sqr("h3"));
 		TTEST_EQUAL(s3, GameState(BitBoard(epd), Player::BLACK, Mask(), Sqr("h3")));
+	}
+
+	TTEST_CASE("Constructor throws if en passant square on wrong row.")
+	{
+		try {
+			GameState("8/8/8/8/8/7P/8/8 b - h2");
+			TTEST_EQUAL(true, false);
+		} catch (std::invalid_argument& e) {
+		}
+	}
+
+	TTEST_CASE("Constructor throws if invalid captured piece for en passant.")
+	{
+		try {
+			GameState("8/8/8/8/7R/8/8/8 b - h3");
+			TTEST_EQUAL(false, true);
+		} catch (std::invalid_argument& e) {
+		}
+		try {
+			GameState("8/8/8/8/7p/8/8/8 b - h3");
+			TTEST_EQUAL(false, true);
+		} catch (std::invalid_argument& e) {
+		}
+		try {
+			GameState("8/8/8/8/8/8/8/8 b - h3");
+			TTEST_EQUAL(false, true);
+		} catch (std::invalid_argument& e) {
+		}
 	}
 
 	TTEST_CASE("Reads half move clock from FEN.")
