@@ -47,8 +47,8 @@ private:
 	{
 		TTEST_EQUAL(Epd("8/8/8/8/8/8/8/3K4 w - -").castlingRights(), Mask());
 		TTEST_EQUAL(Epd("8/8/8/8/8/8/8/3K4 w KQkq -").castlingRights(), Mask({0, 7, 56, 63}));
-		TTEST_EQUAL(Epd("8/8/8/8/8/8/8/3K4 w Qk -").castlingRights(), Mask({0, 63}));
-		TTEST_EQUAL(Epd("8/8/8/8/8/8/8/3K4 w Kq -").castlingRights(), Mask({7, 56}));
+		TTEST_EQUAL(Epd("8/8/8/8/8/8/8/3K4 w Qk -").castlingRights(), Mask({7, 56}));
+		TTEST_EQUAL(Epd("8/8/8/8/8/8/8/3K4 w Kq -").castlingRights(), Mask({0, 63}));
 	}
 
 	TTEST_CASE("Reads en passant square correctly.")

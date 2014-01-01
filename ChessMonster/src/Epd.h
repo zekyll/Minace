@@ -151,10 +151,10 @@ private:
 		if (s[idx] == '-') {
 			++idx;
 		} else {
-			parseCastlingRight(s, idx, 'K', Sqr(56));
-			parseCastlingRight(s, idx, 'Q', Sqr(63));
-			parseCastlingRight(s, idx, 'k', Sqr(0));
-			parseCastlingRight(s, idx, 'q', Sqr(7));
+			parseCastlingRight(s, idx, 'K', Sqr(63));
+			parseCastlingRight(s, idx, 'Q', Sqr(56));
+			parseCastlingRight(s, idx, 'k', Sqr(7));
+			parseCastlingRight(s, idx, 'q', Sqr(0));
 
 			if (!mCastlingRights)
 				throw std::invalid_argument("Invalid castling rights in position description.");

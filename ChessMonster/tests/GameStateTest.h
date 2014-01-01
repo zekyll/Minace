@@ -63,8 +63,8 @@ private:
 
 		epd = "r3k2r/8/8/8/8/8/8/R3K2R b Qk -";
 		GameState s3(epd);
-		TTEST_EQUAL(s3.castlingRights(), Mask({0, 63}));
-		TTEST_EQUAL(s3, GameState(BitBoard(epd), Player::BLACK, Mask({0, 63})));
+		TTEST_EQUAL(s3.castlingRights(), Mask({7, 56}));
+		TTEST_EQUAL(s3, GameState(BitBoard(epd), Player::BLACK, Mask({7, 56})));
 	}
 
 	TTEST_CASE("Reads en passant square from EPD.")
