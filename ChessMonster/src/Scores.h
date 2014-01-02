@@ -5,6 +5,8 @@
 #include "Player.h"
 #include "Piece.h"
 #include <climits>
+#include <iomanip>
+#include <cmath>
 
 namespace cm {
 
@@ -35,6 +37,31 @@ public:
 	};
 
 	static TScore POSITIONAL_PIECE_VALUES[Player::COUNT][Piece::COUNT][Sqr::COUNT];
+
+	/* Get score for mate in given number of moves. (Negative if player gets mated. ) */
+	static int getCheckMateScore(int moves)
+	{
+		int score = PIECE_VALUES[Piece::KING] - (std::abs(moves) + 1) * CHECK_MATE_DEPTH_ADJUSTMENT;
+		return moves >= 0 ? score : -score;
+	}
+
+	/* Show score in floating point form and with human readable mate scores. */
+	static std::string toStr(int score)
+	{
+		if (score > CHECK_MATE_THRESHOLD) {
+			int moves = std::round((double) (PIECE_VALUES[Piece::KING] - score) /
+					CHECK_MATE_DEPTH_ADJUSTMENT) - 1;
+			return "mate " + std::to_string(moves);
+		} else if (score < -CHECK_MATE_THRESHOLD) {
+			int moves = -(std::round((double) (score + PIECE_VALUES[Piece::KING]) /
+					CHECK_MATE_DEPTH_ADJUSTMENT) - 1);
+			return "mate " + std::to_string(moves);
+		} else {
+			std::stringstream ss;
+			ss << std::setprecision(2) << std::fixed << 0.01 * score;
+			return ss.str();
+		}
+	}
 
 private:
 
