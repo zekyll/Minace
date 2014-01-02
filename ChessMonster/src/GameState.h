@@ -179,6 +179,13 @@ public:
 			getLegalMoves(fromSqr, moves);
 	}
 
+	bool isLegalMove(Move move)
+	{
+		std::vector<Move> moves;
+		getLegalMoves(moves);
+		return std::find(moves.begin(), moves.end(), move) != moves.end();
+	}
+
 	void getLegalMoves(Sqr fromSqr, std::vector<Move>& moves)
 	{
 		Mask movesMask = getPseudoLegalMoves(mPlayer, fromSqr);
@@ -189,7 +196,7 @@ public:
 			if (toSqr == mHist[mPly].enPassantSqr && pieceType == Piece::PAWN)
 				capturedType = Piece::PAWN;
 			Move move(fromSqr, toSqr, pieceType, capturedType, pieceType);
-			if (!isLegalMove(move))
+			if (!isLegalMove2(move))
 				continue;
 			if (pieceType == Piece::PAWN && toSqr.row() == mPlayer * 7) {
 				for (unsigned promoType = Piece::QUEEN; promoType <= Piece::KNIGHT; ++promoType)
@@ -401,7 +408,8 @@ private:
 		mHist[mPly].zobristCode ^= Zobrist::PIECE_SQR_RND[player][piece][sqr];
 	}
 
-	bool isLegalMove(Move move)
+	/* Checks whether a pseudo-legal move is legal. */
+	bool isLegalMove2(Move move)
 	{
 		Player player = mPlayer;
 		makeMove(move);
