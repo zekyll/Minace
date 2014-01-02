@@ -79,7 +79,7 @@ public:
 		Piece capturedType = board.getPieceType(toSqr);
 
 		// En passant
-		if (pieceType == Piece::PAWN && fromSqr.row() != toSqr.row() && !capturedType)
+		if (pieceType == Piece::PAWN && fromSqr.col() != toSqr.col() && !capturedType)
 			capturedType = Piece::PAWN;
 
 		// Promotion type
