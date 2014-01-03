@@ -77,6 +77,9 @@ private:
 
 	std::atomic_bool mStopped;
 
+	// Evaluation score for previous search.
+	int mScore;
+
 public:
 
 	MinMaxAI(std::function<InfoCallback> infoCallback = nullptr,
@@ -91,7 +94,8 @@ public:
 	mEvaluator(MAX_SEARCH_DEPTH + quiescenceSearchDepth),
 	mEffectiveBranchingFactor(0.0),
 	mBestMove(),
-	mStopped(ATOMIC_FLAG_INIT)
+	mStopped(ATOMIC_FLAG_INIT),
+	mScore(0)
 	{
 	}
 
@@ -108,12 +112,13 @@ public:
 		GameState stateCopy = state;
 		mStopped = false;
 		mTotalNodeCount = 0;
+		mScore = 0;
 		setupTimeConstraint(tc, state.activePlayer());
 		//		unsigned lastIterNodeCount = 0, lastIterTrPosTblHitCount = 0, lastIterTrposTblSize = 0;
 		//		double lastIterBranchingFactor = 0.0;
 
-		unsigned maxDepth = std::min((unsigned)MAX_SEARCH_DEPTH,
-				mTimeConstraint.depth ? mTimeConstraint.depth : (unsigned)-1);
+		unsigned maxDepth = std::min((unsigned) MAX_SEARCH_DEPTH,
+				mTimeConstraint.depth ? mTimeConstraint.depth : (unsigned) - 1);
 		for (int depth = 1; (unsigned) depth <= maxDepth; ++depth) {
 			if (!findMove(stateCopy, depth))
 				break;
@@ -122,8 +127,10 @@ public:
 			//			lastIterTrPosTblHitCount = mTrposTblHitCount;
 			//			lastIterTrposTblSize = mTrposTbl.size();
 			//			lastIterBranchingFactor = std::pow(mNodeCount, 1.0 / depth);
-			if (depth >= 2)
+			if (depth >= 2) {
 				mBestMove = mResults[0].bestMove;
+				mScore = mResults[0].score;
+			}
 		}
 
 		//		log("nodeCount=" + lastIterNodeCount);
@@ -150,7 +157,12 @@ public:
 		return mEffectiveBranchingFactor;
 	}
 
-	void stop()
+	virtual int getScore() override
+	{
+		return mScore;
+	}
+
+	virtual void stop() override
 	{
 		mStopped = true;
 	}
