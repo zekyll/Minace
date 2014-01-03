@@ -47,6 +47,7 @@ public:
 		while (!mState.isCheckMate() && !mState.isStaleMate()) {
 			if (!getAndProcessMove()) {
 				mResult = ~(mState.activePlayer());
+				break;
 			}
 		}
 
