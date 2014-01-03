@@ -88,6 +88,7 @@ private:
 
 	void init(const std::string& s, size_t& idx)
 	{
+		mString = s;
 		mBoard = BitBoard(s, &idx);
 		parseSpace(s, idx);
 		parseStartingPlayer(s, idx);
