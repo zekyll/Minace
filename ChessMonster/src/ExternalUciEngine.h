@@ -52,7 +52,7 @@ public:
 
 	virtual Move getMove(const GameState& state, const TimeConstraint& tc) override
 	{
-		writeLine("position fen " + state.toStr(true));
+		writeLine("position fen " + state.toStr());
 
 		writeLine("go" + getTimeControlCommands(tc));
 

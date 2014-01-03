@@ -58,7 +58,7 @@ private:
 			return true;
 		} else {
 			logger.logMessage(epd.string() + " [FAILED]");
-			std::string brd = state.board().toStr() + "#";
+			std::string brd = state.board().toStr(true) + "#";
 			brd = "  " + stringReplace(brd, "\n", "\n  ");
 			brd = stringReplace(brd, "\n  #", "");
 			logger.logMessage(brd);

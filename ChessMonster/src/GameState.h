@@ -347,45 +347,44 @@ public:
 		return states;
 	}
 
-	std::string toStr(bool fen = false) const
+	/* Convert game state into FEN string. */
+	std::string toStr() const
 	{
 		std::stringstream ss;
-		if (fen) {
-			// Board
-			ss << mBoard.toStr(true);
-
-			// Starting player
-			ss << " " << (mPlayer == Player::WHITE ? "w" : "b");
-
-			// Castling rights
-			ss << " ";
-			Mask cr = castlingRights();
-			if (cr) {
-				ss << (cr & Sqr(63) ? "K" : "");
-				ss << (cr & Sqr(56) ? "Q" : "");
-				ss << (cr & Sqr(7) ? "k" : "");
-				ss << (cr & Sqr(0) ? "q" : "");
-			} else {
-				ss << "-";
-			}
-
-			// En passant sqr
-			ss << " " << (enPassantSqr() ? enPassantSqr().toStr() : "-");
-
-			// Half move clock
-			ss << " " << halfMoveClock();
-
-			// Full move number
-			ss << " " << mPly / 2 + 1;
-		} else {
-			ss << *this;
-		}
+		ss << *this;
 		return ss.str();
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const GameState_t& state)
 	{
-		return os << state.mBoard;
+		// Board
+		os << state.mBoard;
+
+		// Starting player
+		os << " " << (state.mPlayer == Player::WHITE ? "w" : "b");
+
+		// Castling rights
+		os << " ";
+		Mask castles = state.castlingRights();
+		if (castles) {
+			os << (castles & Sqr(63) ? "K" : "");
+			os << (castles & Sqr(56) ? "Q" : "");
+			os << (castles & Sqr(7) ? "k" : "");
+			os << (castles & Sqr(0) ? "q" : "");
+		} else {
+			os << "-";
+		}
+
+		// En passant sqr
+		os << " " << (state.enPassantSqr() ? state.enPassantSqr().toStr() : "-");
+
+		// Half move clock
+		os << " " << state.halfMoveClock();
+
+		// Full move number
+		os << " " << state.mPly / 2 + 1;
+
+		return os;
 	}
 
 private:

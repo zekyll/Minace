@@ -170,27 +170,18 @@ public:
 		return !(*this == rhs);
 	}
 
-	std::string toStr(bool fen = false) const
+	/* Convert board into (partial) FEN string or into fancy multi line representation . */
+	std::string toStr(bool fancyMultiLineBoard = false) const
 	{
 		std::stringstream ss;
-		if (fen) {
+		if (fancyMultiLineBoard) {
 			for (unsigned row = 0; row < 8; ++row) {
-				unsigned emptyCount = 0;
 				for (unsigned col = 0; col < 8; ++col) {
-					Sqr sqr(row, col);
-					if ((*this)(sqr)) {
-						if (emptyCount)
-							ss << emptyCount;
-							ss << getPieceType(sqr).toStr(getPlayer(sqr), true);
-						emptyCount = 0;
-					} else {
-						++emptyCount;
-					}
+					Player player = getPlayer(Sqr(row, col));
+					Piece piece = player ? getPieceType(player, Sqr(row, col)) : Piece::NONE;
+					ss << piece.toStr(player, true);
 				}
-				if (emptyCount)
-					ss << emptyCount;
-				if (row < 7)
-					ss << "/";
+				ss << '\n';
 			}
 		} else {
 			ss << *this;
@@ -198,15 +189,26 @@ public:
 		return ss.str();
 	}
 
+	/* Output board using FEN. */
 	friend std::ostream& operator<<(std::ostream& os, const BitBoard& board)
 	{
 		for (unsigned row = 0; row < 8; ++row) {
+			unsigned emptyCount = 0;
 			for (unsigned col = 0; col < 8; ++col) {
-				Player player = board.getPlayer(Sqr(row, col));
-				Piece piece = player ? board.getPieceType(player, Sqr(row, col)) : Piece::NONE;
-				os << piece.toStr(player, true);
+				Sqr sqr(row, col);
+				if (board(sqr)) {
+					if (emptyCount)
+						os << emptyCount;
+					os << board.getPieceType(sqr).toStr(board.getPlayer(sqr), true);
+					emptyCount = 0;
+				} else {
+					++emptyCount;
+				}
 			}
-			os << '\n';
+			if (emptyCount)
+				os << emptyCount;
+			if (row < 7)
+				os << "/";
 		}
 		return os;
 	}

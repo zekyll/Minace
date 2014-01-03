@@ -319,36 +319,36 @@ private:
 	TTEST_CASE("Output to FEN string (starting position).")
 	{
 		GameState s;
-		TTEST_EQUAL(s.toStr(true), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+		TTEST_EQUAL(s.toStr(), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 
 	TTEST_CASE("Output to FEN string (black to move, no castling rights).")
 	{
 		GameState s("8/8/8/8/8/8/8/8 b - - 0 1");
-		TTEST_EQUAL(s.toStr(true), "8/8/8/8/8/8/8/8 b - - 0 1");
+		TTEST_EQUAL(s.toStr(), "8/8/8/8/8/8/8/8 b - - 0 1");
 	}
 
 	TTEST_CASE("Output to FEN string (partial castling rights).")
 	{
 		GameState s("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Kq - 0 1");
-		TTEST_EQUAL(s.toStr(true), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Kq - 0 1");
+		TTEST_EQUAL(s.toStr(), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Kq - 0 1");
 		GameState s2("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Qk - 0 1");
-		TTEST_EQUAL(s2.toStr(true), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Qk - 0 1");
+		TTEST_EQUAL(s2.toStr(), "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w Qk - 0 1");
 	}
 
 	TTEST_CASE("Output to FEN string (en passant square, half move clock).")
 	{
 		GameState s("8/8/8/1p6/8/8/8/8 w - b6 4 1");
-		TTEST_EQUAL(s.toStr(true), "8/8/8/1p6/8/8/8/8 w - b6 4 1");
+		TTEST_EQUAL(s.toStr(), "8/8/8/1p6/8/8/8/8 w - b6 4 1");
 	}
 
 	TTEST_CASE("Output to FEN string (full move number incremented every second move).")
 	{
 		GameState s;
 		s.makeMove(Move("e2-e4"));
-		TTEST_EQUAL(s.toStr(true), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
+		TTEST_EQUAL(s.toStr(), "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1");
 		s.makeMove(Move("c7-c5"));
-		TTEST_EQUAL(s.toStr(true), "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2");
+		TTEST_EQUAL(s.toStr(), "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2");
 	}
 };
 
