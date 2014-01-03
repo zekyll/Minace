@@ -41,6 +41,9 @@ private:
 
 	static constexpr unsigned MAX_SEARCH_DEPTH = 30;
 
+	// Don't let clock run lower than this because of timing inaccuracies, random delays etc.
+	static constexpr double CLOCK_SAFETY_MARGIN = 0.1;
+
 	unsigned mQuiescenceSearchDepth;
 
 	TranspositionTable<StateInfo> mTrposTbl;
@@ -412,7 +415,7 @@ private:
 		// If clock is used then allocate a time slot based on remaining time. The actual time
 		// limit is then the minimum of the time slot and the hard limit (tc.time).
 		if (mTimeConstraint.clock[player]) {
-			double timeSlot = mTimeConstraint.clock[player] ? mTimeConstraint.clock[player] : 100.0;
+			double timeSlot = mTimeConstraint.clock[player] - CLOCK_SAFETY_MARGIN;
 			int moves = mTimeConstraint.clockMovesLeft ? mTimeConstraint.clockMovesLeft : 30;
 			timeSlot += moves * mTimeConstraint.clockIncrement[player];
 			timeSlot /= moves + 1;
@@ -422,6 +425,8 @@ private:
 			else
 				mTimeConstraint.time = timeSlot;
 		}
+
+		//mInfoCallback->notifyString("Time limit: " + std::to_string(mTimeConstraint.time));
 	}
 };
 
