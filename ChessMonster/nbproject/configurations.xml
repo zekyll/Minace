@@ -6,6 +6,7 @@
       <itemPath>src/BitBoard.h</itemPath>
       <itemPath>src/Epd.h</itemPath>
       <itemPath>src/Evaluator.h</itemPath>
+      <itemPath>src/ExternalUciEngine.h</itemPath>
       <itemPath>src/Game.h</itemPath>
       <itemPath>src/GameGenerator.h</itemPath>
       <itemPath>src/GameObserver.h</itemPath>
@@ -90,6 +91,8 @@
       <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/ExternalUciEngine.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Game.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -206,6 +209,8 @@
       <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Evaluator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/ExternalUciEngine.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Game.h" ex="false" tool="3" flavor2="0">
       </item>
