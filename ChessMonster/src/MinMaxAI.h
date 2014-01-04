@@ -249,8 +249,11 @@ private:
 			++mTrposTblHitCount;
 			if (info->nodeType == NodeType::EXACT
 					|| (info->nodeType == NodeType::LOWER_BOUND && info->score >= beta)
-					|| (info->nodeType == NodeType::UPPER_BOUND && info->score <= alpha))
+					|| (info->nodeType == NodeType::UPPER_BOUND && info->score <= alpha)) {
+				mResults[mPly].bestMove = info->bestMove;
+				mResults[mPly].score = info->score;
 				return info->score;
+			}
 		}
 		Move bestMove = info && depth > 0 ? info->bestMove : Move();
 
@@ -258,6 +261,7 @@ private:
 		mResults[mPly].id = state.getId();
 		mResults[mPly].nodeType = NodeType::UPPER_BOUND;
 		mResults[mPly].score = Scores::MIN;
+		mResults[mPly].bestMove = Move();
 		mEarlierStates.put(state.getId());
 
 		// Search all moves.
