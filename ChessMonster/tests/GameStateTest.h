@@ -162,6 +162,14 @@ private:
 		TTEST_EQUAL(s.castlingRights().toStr(), "h8");
 	}
 
+	TTEST_CASE("Capturing an unmoved rook removes the castling right and updates zobrist code.")
+	{
+		GameState s("Ra1 Ke1 Rh1 Bb7", "Ra8 Ke8 Rh8", Player::WHITE, ~Mask());
+		s.makeMove("Bb7xRa8");
+		TTEST_EQUAL(s.castlingRights(), Mask({7, 56, 63}));
+		TTEST_EQUAL(s, GameState("Ra1 Ke1 Rh1 Ba8", "Ke8 Rh8", Player::BLACK, Mask({7, 56, 63})));
+	}
+
 	TTEST_CASE("MakeMove changes player.")
 	{
 		GameState s("Kc3 Nd2", "Kf5 d7", Player::WHITE);
