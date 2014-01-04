@@ -37,6 +37,14 @@ public:
 	{
 		return Player_t(1 ^ mValue);
 	}
+
+	std::string toStr(bool longName = false) const
+	{
+		if (longName)
+			return *this ? (*this == WHITE ? "white" : "black") : "n/a";
+		else
+			return *this ? (*this == WHITE ? "w" : "b") : "-";
+	}
 };
 
 template<typename T>

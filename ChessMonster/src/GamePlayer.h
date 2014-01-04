@@ -15,6 +15,11 @@ public:
 
 	virtual Move getMove(const GameState& state, const TimeConstraint& tc) = 0;
 
+	virtual std::string name() const
+	{
+		return "Player";
+	}
+
 	virtual int getScore()
 	{
 		return 0;

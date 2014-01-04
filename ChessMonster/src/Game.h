@@ -10,6 +10,11 @@
 
 namespace cm {
 
+enum class GameResultType
+{
+	NORMAL, OUT_OF_TIME, ILLEGAL_MOVE, LOST_CONNECTION
+};
+
 /*
  * Allows playing a game between two players and manages game rules and time control. An observer
  * can be registered that is notified about game events.
@@ -29,11 +34,16 @@ private:
 
 	std::vector<Move> mMoves;
 
+	std::string mErrorMsg;
+
+	GameResultType mResultType;
+
 public:
 
 	Game(GamePlayer& whitePlayer, GamePlayer& blackPlayer, const TimeConstraint& tc,
 			const GameState& state = GameState(), GameObserver* observer = nullptr)
-	: mState(state), mTimeConstraint(tc), mResult(Player::NONE), mObserver(observer)
+	: mState(state), mTimeConstraint(tc), mResult(Player::NONE), mObserver(observer),
+	mResultType(GameResultType::NORMAL)
 	{
 		mPlayers[Player::WHITE] = &whitePlayer;
 		mPlayers[Player::BLACK] = &blackPlayer;
@@ -41,11 +51,12 @@ public:
 
 	void run()
 	{
-		mPlayers[Player::WHITE]->startNewGame();
-		mPlayers[Player::BLACK]->startNewGame();
+		init(Player::WHITE);
+		init(Player::BLACK);
 
 		while (!mState.isCheckMate() && !mState.isStaleMate()) {
-			if (!getAndProcessMove()) {
+			mResultType = getAndProcessMove();
+			if (mResultType != GameResultType::NORMAL) {
 				mResult = ~(mState.activePlayer());
 				break;
 			}
@@ -55,7 +66,7 @@ public:
 			mResult = ~mState.activePlayer();
 
 		if (mObserver)
-			mObserver->notifyEnd(mState, mResult);
+			mObserver->notifyEnd(*this, mResult);
 	}
 
 	GamePlayer& player(Player player)
@@ -78,31 +89,64 @@ public:
 		return mMoves;
 	}
 
+	const TimeConstraint& timeConstraint() const
+	{
+		return mTimeConstraint;
+	}
+
+	const std::string& errorMsg() const
+	{
+		return mErrorMsg;
+	}
+
+	GameResultType resultType() const
+	{
+		return mResultType;
+	}
+
 private:
 
-	bool getAndProcessMove()
+	bool init(Player player)
+	{
+		try {
+			mPlayers[player]->startNewGame();
+			return true;
+		} catch (std::exception& e) {
+			mErrorMsg = e.what();
+			mResult = ~player;
+			mResultType = GameResultType::LOST_CONNECTION;
+			return false;
+		}
+	}
+
+	GameResultType getAndProcessMove()
 	{
 		Player player = mState.activePlayer();
 
 		auto t1 = std::chrono::high_resolution_clock::now();
 		mTimeConstraint.startTurn(player);
 
-		Move move = mPlayers[player]->getMove(mState, mTimeConstraint);
+		Move move;
+		try {
+			move = mPlayers[player]->getMove(mState, mTimeConstraint);
+		} catch (std::exception& e) {
+			mErrorMsg = e.what();
+			return GameResultType::LOST_CONNECTION;
+		}
 
 		auto t2 = std::chrono::high_resolution_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() * 1e-6;
 		if (!mTimeConstraint.endTurn(player, t))
-			return false;
+			return GameResultType::OUT_OF_TIME;
 
-		if (!mState.isLegalMove(move)) {
-			//throw std::runtime_error("Illegal move " + mState.toStr(true) + " " + move.toStr());
-			return false;
-		}
-		mState.makeMove(move);
 		mMoves.push_back(move);
+		if (!mState.isLegalMove(move))
+			return GameResultType::ILLEGAL_MOVE;
+		mState.makeMove(move);
 		if (mObserver)
-			mObserver->notifyMove(mState, mMoves.size() - 1, *mPlayers[player], move, t);
-		return true;
+			mObserver->notifyMove(*this, mMoves.size() - 1, *mPlayers[player], move, t);
+
+		return GameResultType::NORMAL;
 	}
 };
 

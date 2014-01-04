@@ -96,7 +96,7 @@ public:
 		mStats.clear();
 		mStats.resize(mExecutableFileNames.size());
 
-		unsigned matchesLeft = mMatchCount;
+		unsigned matchesLeft = (mMatchCount + 1) / 2 * 2;
 		std::vector<std::thread> threads;
 		for (size_t threadIdx = 0; threadIdx < mThreadCount; ++threadIdx) {
 			threads.emplace_back([this, threadIdx, &matchesLeft] {
@@ -134,25 +134,15 @@ private:
 	{
 		std::lock_guard<std::mutex> l(mMutex);
 
-		double& sum = mStats[opponentIdx].sum;
-		double& sumSqr = mStats[opponentIdx].sumSqr;
-		unsigned& n = mStats[opponentIdx].n;
-
-		sum += score;
-		sumSqr += score * score;
-		++n;
-		double avg = sum / n;
-		double stdev = sqrt((sumSqr - sum * sum / n) / (n - 1));
+		mStats[opponentIdx].sum += score;
+		mStats[opponentIdx].sumSqr += score * score;
+		++mStats[opponentIdx].n;
 
 		if (opponentIdx > 0) {
 			mOut << "T" << threadIdx << ": E0 vs E" << opponentIdx << ": ";
 			mOut << std::setprecision(1) << std::fixed;
-			mOut << score << "/2 "
-					<< "(" << sum << "/" << (n * 2) << "), "
-					<< std::setprecision(3)
-					<< "Avg " << avg << " +- " << 2 * stdev / sqrt(n)
-					<< std::endl;
-		} else if (n % PRINT_INTERVAL == 0) {
+			mOut << score << "/2" << std::endl;
+		} else if (mStats[opponentIdx].n % PRINT_INTERVAL == 0) {
 			printStats();
 		}
 	}
@@ -164,8 +154,10 @@ private:
 			double& sum = mStats[i].sum;
 			double& sumSqr = mStats[i].sumSqr;
 			unsigned& n = mStats[i].n;
-			double avg = sum / n;
-			double stdev = sqrt((sumSqr - sum * sum / n) / (n - 1));
+
+			double avg = 0.5 * sum / n;
+			double stdev = 0.5 * sqrt((sumSqr - sum * sum / n) / (n - 1));
+
 			if (i > 0)
 				mOut << "Vs E" << i << ":  ";
 			else
@@ -181,46 +173,74 @@ private:
 
 	double playMatchPair(size_t opponentIdx)
 	{
-		ExternalUciEngine p1(mExecutableFileNames[0],{}, nullptr);
-		ExternalUciEngine p2(mExecutableFileNames[opponentIdx],{}, nullptr);
+		ExternalUciEngine p1(mExecutableFileNames[0],{}, nullptr, "E0");
+		ExternalUciEngine p2(mExecutableFileNames[opponentIdx],{}, nullptr,
+				"E" + std::to_string(opponentIdx));
 
 		GameState state = generateRandomOpening(6);
 		//mOut << state.toStr(true) << std::endl;
 		double score = playMatch(state, p1, p2);
 		score += 1 - playMatch(state, p2, p1);
 
-		p1.quit();
-		p2.quit();
+		try {
+			p1.quit();
+		} catch (std::exception& e) {
+			mOut << "Failed to close " << p1.name() << ": " << e.what() << std::endl;
+		}
+		try {
+			p2.quit();
+		} catch (std::exception& e) {
+			mOut << "Failed to close " << p2.name() << ": " << e.what() << std::endl;
+		}
 
 		return score;
 	}
 
 	double playMatch(const GameState& state, GamePlayer& white, GamePlayer& black)
 	{
-		Game game(white, black, mTimeConstraint, state, nullptr);
+		Game game(white, black, mTimeConstraint, state, this);
 		game.run();
 
-		Player result = game.result();
-		if (result == Player::WHITE)
+		if (game.result() == Player::WHITE)
 			return 1.0;
-		else if (result == Player::BLACK)
+		else if (game.result() == Player::BLACK)
 			return 0.0;
 		else
 			return 0.5;
 	}
 
-	virtual void notifyMove(const GameState& state, unsigned ply, GamePlayer& player,
+	virtual void notifyMove(Game& game, unsigned ply, GamePlayer& player,
 			Move move, double time) override
 	{
-		mOut << move.toStr()
-				<< " " << Scores::toStr(player.getScore())
-				<< " " << std::setprecision(3) << std::fixed << time
-				<< std::endl;
+//		mOut << ply / 2 + 1 << ". " << (ply % 2 == 1 ? "... " : "")
+//				<< move.toStr()
+//				<< " " << Scores::toStr(player.getScore())
+//				<< " " << std::setprecision(3) << std::fixed << time
+//				<< " (" << game.timeConstraint().clock[Player::WHITE] << ", "
+//				<< game.timeConstraint().clock[Player::BLACK] << ", "
+//				<< game.timeConstraint().clockMovesLeft << ")"
+//				<< std::endl;
 	}
 
-	virtual void notifyEnd(const GameState& state, Player result) override
+	virtual void notifyEnd(Game& game, Player result) override
 	{
-		mOut << "result " << result << std::endl;
+		std::lock_guard<std::mutex> l(mMutex);
+
+		if (game.resultType() == GameResultType::NORMAL)
+			return;
+
+		Player loser = ~game.result();
+		std::string name = game.player(loser).name();
+
+		if (game.resultType() == GameResultType::ILLEGAL_MOVE) {
+			mOut << "Illegal move by " << name << ": " << game.moves().back().toStr()
+					<< ". (" << game.state() << ")" << std::endl;
+		} else if (game.resultType() == GameResultType::LOST_CONNECTION) {
+			mOut << "Connection was lost to " << name << ": "
+					<< game.errorMsg() << std::endl;
+		} else if (game.resultType() == GameResultType::OUT_OF_TIME) {
+			mOut << name << " ran out of time. " << std::endl;
+		}
 	}
 
 	GameState generateRandomOpening(unsigned depth)

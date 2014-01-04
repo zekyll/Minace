@@ -26,11 +26,14 @@ private:
 
 	int mScore;
 
+	std::string mName;
+
 public:
 
 	explicit ExternalUciEngine(const std::string& path, const std::vector<std::string>& args
-			= std::vector<std::string>(), std::ostream* log = nullptr)
-	: mEngine(path, args), mLog(log), mScore(0)
+			= std::vector<std::string>(), std::ostream* log = nullptr,
+			const std::string name = "")
+	: mEngine(path, args), mLog(log), mScore(0), mName(name)
 	{
 		mEngine.in().exceptions(std::ios::badbit | std::ios::failbit);
 		mEngine.out().exceptions(std::ios::badbit | std::ios::failbit);
@@ -69,7 +72,11 @@ public:
 			} else if (cmd == "bestmove") {
 				std::string moveStr;
 				ss >> moveStr;
-				return Move(moveStr, state.board());
+				try {
+					return Move(moveStr, state.board());
+				} catch (std::exception& e) {
+					throw std::runtime_error("Illegal move " + moveStr);
+				}
 			}
 		}
 
@@ -91,6 +98,19 @@ public:
 		writeLine("quit");
 		mEngine.wait();
 	};
+
+	virtual std::string name() const override
+	{
+		return mName;
+	}
+
+	virtual ~ExternalUciEngine()
+	{
+		try {
+			mEngine.wait();
+		} catch (...) {
+		}
+	}
 
 private:
 

@@ -169,6 +169,8 @@ public:
 			argv.push_back(s.c_str());
 		argv.push_back(nullptr);
 
+		signal(SIGPIPE, SIG_IGN);
+
 		mPid = popen2(path.c_str(), &mFdIn, &mFdOut, argv.data());
 		if (mPid <= 0)
 			throw std::system_error(errno, std::system_category());
