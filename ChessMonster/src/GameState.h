@@ -387,6 +387,16 @@ public:
 		return os;
 	}
 
+	/* Checks whether a pseudo-legal move is legal. */
+	bool isLegalMove2(Move move)
+	{
+		Player player = mPlayer;
+		makeMove(move);
+		bool legal = !isKingChecked(player);
+		undoMove(move);
+		return legal;
+	}
+
 private:
 
 	void changeNextMovingPlayer()
@@ -405,16 +415,6 @@ private:
 	{
 		mBoard.removePiece(player, piece, sqr);
 		mHist[mPly].zobristCode ^= Zobrist::PIECE_SQR_RND[player][piece][sqr];
-	}
-
-	/* Checks whether a pseudo-legal move is legal. */
-	bool isLegalMove2(Move move)
-	{
-		Player player = mPlayer;
-		makeMove(move);
-		bool legal = !isKingChecked(player);
-		undoMove(move);
-		return legal;
 	}
 
 	void removeCapturedPiece(Move move)
