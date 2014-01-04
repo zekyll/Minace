@@ -88,6 +88,9 @@ public:
 			checkCastlingRight(Player::BLACK, Sqr(7), castlingRights);
 		}
 
+		if (enPassantSqr)
+			mHist[0].zobristCode ^= Zobrist::EN_PASSANT_RND[enPassantSqr];
+
 		for (unsigned player = 0; player < Player::COUNT; ++player) {
 			for (unsigned sqr = 0; sqr < Sqr::COUNT; ++sqr) {
 				Piece piece = mBoard.getPieceType(Player(player), Sqr(sqr));
