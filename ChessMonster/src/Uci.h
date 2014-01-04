@@ -16,7 +16,7 @@ namespace cm {
 /**
  * Implementation of Universal Chess Interface.
  */
-class Uci
+class Uci : public InfoCallback
 {
 private:
 
@@ -176,9 +176,7 @@ private:
 		cleanup();
 
 		// Create AI
-		auto cb = std::bind(&Uci::infoCallback, this, std::placeholders::_1, std::placeholders::_2,
-				std::placeholders::_3, std::placeholders::_4);
-		mAi.reset(new MinMaxAI(cb));
+		mAi.reset(new MinMaxAI(this))
 		mStartTime = std::chrono::high_resolution_clock::now();
 
 		mAiThread.reset(new std::thread([this, tc]() {
@@ -190,7 +188,8 @@ private:
 		}));
 	}
 
-	void infoCallback(int depth, int score, long long nodes, const std::vector<Move>& pv)
+	virtual void notifyPv(int depth, int score, long long nodes,
+			const std::vector<Move>& pv) override
 	{
 		mOut << "info";
 		mOut << " depth " << depth;
@@ -204,6 +203,11 @@ private:
 		for (Move m : pv)
 			mOut << " " << m.toStr(true);
 		mOut << std::endl;
+	}
+
+	virtual void notifyString(const std::string& s) override
+	{
+		mOut << "info string " << s << std::endl;
 	}
 
 	void cleanup()

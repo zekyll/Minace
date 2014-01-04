@@ -20,7 +20,18 @@
 
 namespace cm {
 
-typedef void InfoCallback(int depth, int score, uint64_t nodes, const std::vector<Move>& pv);
+class InfoCallback
+{
+public:
+
+	virtual void notifyPv(int depth, int score, long long nodes, const std::vector<Move>& pv)
+	{
+	}
+
+	virtual void notifyString(const std::string& s)
+	{
+	}
+};
 
 /**
  * AI based on minmax/negamax and alpha-beta pruning.
@@ -52,7 +63,7 @@ private:
 
 	TimeConstraint mTimeConstraint;
 
-	std::function<InfoCallback> mInfoCallback;
+	InfoCallback* mInfoCallback;
 
 	unsigned mPly;
 
@@ -85,7 +96,7 @@ private:
 
 public:
 
-	MinMaxAI(std::function<InfoCallback> infoCallback = nullptr,
+	MinMaxAI(InfoCallback* infoCallback = nullptr,
 			unsigned quiescenceSearchDepth = 30, unsigned treeGenerationDepth = 0)
 	: mQuiescenceSearchDepth(quiescenceSearchDepth),
 	mEarlierStates(512),
@@ -338,7 +349,7 @@ private:
 				if (mPly == 0 && mInfoCallback) {
 					std::vector<Move> mvs;
 					mvs.push_back(move);
-					mInfoCallback(depth, score, mTotalNodeCount + mNodeCount, mvs);
+					mInfoCallback->notifyPv(depth, score, mTotalNodeCount + mNodeCount, mvs);
 				}
 				if (score >= beta)
 					mResults[mPly].nodeType = NodeType::LOWER_BOUND;
