@@ -35,7 +35,7 @@ private:
 public:
 
 	Uci(std::istream& in, std::ostream& out, std::ostream& log)
-	: mIn(in), mOut(out), mLog(log)
+	: mIn(in), mOut(out), mLog(log), mAi(new MinMaxAI(this))
 	{
 	}
 
@@ -175,8 +175,6 @@ private:
 		// Wait for previous thread to end.
 		cleanup();
 
-		// Create AI
-		mAi.reset(new MinMaxAI(this))
 		mStartTime = std::chrono::high_resolution_clock::now();
 
 		mAiThread.reset(new std::thread([this, tc]() {
