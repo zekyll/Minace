@@ -42,8 +42,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-Wall -pedantic-errors -march=corei7 -mtune=corei7 -pthread
-CXXFLAGS=-Wall -pedantic-errors -march=corei7 -mtune=corei7 -pthread
+CCFLAGS=-Wall -pedantic-errors -march=native -pthread
+CXXFLAGS=-Wall -pedantic-errors -march=native -pthread
 
 # Fortran Compiler Flags
 FFLAGS=

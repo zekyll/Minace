@@ -193,7 +193,7 @@
         <ccTool>
           <developmentMode>5</developmentMode>
           <standard>8</standard>
-          <commandLine>-Wall -pedantic-errors -march=corei7 -mtune=corei7 -pthread</commandLine>
+          <commandLine>-Wall -pedantic-errors -march=native -pthread</commandLine>
           <preprocessorList>
             <Elem>NDEBUG=1</Elem>
           </preprocessorList>
