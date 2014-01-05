@@ -403,7 +403,7 @@ private:
 		return score;
 	}
 
-	void addTranspositionTableEntry(int depth, StateInfo result)
+	void addTranspositionTableEntry(int depth, StateInfo& result)
 	{
 		if (depth > 0 && mTrposTbl.size() < MAX_TRANSPOSITION_TABLE_SIZE) {
 			result.depth = depth;
