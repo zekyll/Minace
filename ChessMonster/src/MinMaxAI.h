@@ -24,7 +24,12 @@ class InfoCallback
 {
 public:
 
-	virtual void notifyPv(int depth, int score, long long nodes, const std::vector<Move>& pv)
+	virtual void notifyPv(unsigned depth, int score, const std::vector<Move>& pv)
+	{
+	}
+
+	virtual void notifyIterDone(unsigned depth, int score, uint64_t nodes, size_t hashEntries,
+			size_t hashCapacity, uint64_t hashHits, uint64_t hashLookup)
 	{
 	}
 
@@ -77,7 +82,7 @@ private:
 
 	unsigned mNodeCount; //TODO 64-bit?
 
-	unsigned mTrposTblHitCount;
+	unsigned mTrposTblCutoffs;
 
 	std::vector<MoveList> mMoveLists;
 
@@ -104,6 +109,7 @@ public:
 	mPly(0),
 	mResults(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth),
 	mTreeGenerator(treeGenerationDepth),
+	mTrposTblCutoffs(0),
 	mMoveLists(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth),
 	mEvaluator(MAX_SEARCH_DEPTH + quiescenceSearchDepth),
 	mEffectiveBranchingFactor(0.0),
@@ -181,6 +187,24 @@ public:
 		mStopped = true;
 	}
 
+	virtual bool cmd(const std::string& c)
+	{
+		if (c == "hashinfo") {
+			if (mInfoCallback) {
+				std::stringstream ss;
+				ss << "debug"
+						<< " hashused " << mTrposTbl.size()
+						<< " hashcap " << mTrposTbl.capacity()
+						<< " hashhits " << mTrposTbl.hits()
+						<< " hashcutoffs " << mTrposTblCutoffs
+						<< " hashlookups " << mTrposTbl.lookups();
+				mInfoCallback->notifyString(ss.str());
+			}
+			return true;
+		}
+		return false;
+	};
+
 private:
 
 	bool findMove(GameState& state, int depth)
@@ -189,7 +213,6 @@ private:
 
 		unsigned prevNodeCount = mNodeCount;
 		mNodeCount = 0;
-		mTrposTblHitCount = 0;
 		mPly = 0;
 		mTreeGenerator.clear();
 		mEvaluator.reset(state);
@@ -203,6 +226,11 @@ private:
 		mTotalNodeCount += mNodeCount;
 		mTree = mTreeGenerator.getTree();
 		mEffectiveBranchingFactor = (double) mNodeCount / (prevNodeCount ? prevNodeCount : 1);
+
+		if (mInfoCallback) {
+			mInfoCallback->notifyIterDone(depth, mResults[0].score, mTotalNodeCount,
+					mTrposTbl.size(), mTrposTbl.capacity(), 0, 0);
+		}
 
 		return true;
 	}
@@ -246,12 +274,12 @@ private:
 		// the best stored move.
 		const StateInfo* info = mTrposTbl.get(state.getId());
 		if (info && info->depth >= depth) {
-			++mTrposTblHitCount;
 			if (info->nodeType == NodeType::EXACT
 					|| (info->nodeType == NodeType::LOWER_BOUND && info->score >= beta)
 					|| (info->nodeType == NodeType::UPPER_BOUND && info->score <= alpha)) {
 				mResults[mPly].bestMove = info->bestMove;
 				mResults[mPly].score = info->score;
+				++mTrposTblCutoffs;
 				return info->score;
 			}
 		}
@@ -351,9 +379,8 @@ private:
 			mResults[mPly].bestMove = move;
 			if (score > alpha) {
 				if (mPly == 0 && mInfoCallback) {
-					std::vector<Move> mvs;
-					mvs.push_back(move);
-					mInfoCallback->notifyPv(depth, score, mTotalNodeCount + mNodeCount, mvs);
+					std::vector<Move> mvs{move};
+					mInfoCallback->notifyPv(depth, score, mvs);
 				}
 				if (score >= beta)
 					mResults[mPly].nodeType = NodeType::LOWER_BOUND;

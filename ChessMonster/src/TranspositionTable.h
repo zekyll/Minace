@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <vector>
 
+#define CM_HASHINFO 0
+
 namespace cm {
 
 template <class T>
@@ -58,38 +60,40 @@ private:
 
 	static constexpr unsigned REMOVED = 2;
 
-	TpHash<TValue> getid;
+	TpHash<TValue> mGedId;
 
-	size_t reservedCount = 0;
+	size_t mReservedCount = 0;
 
-	size_t removedCount = 0;
+	size_t mRemovedCount = 0;
 
-	size_t capacity;
+	size_t mCapacity;
 
-	size_t mask;
+	size_t mMask;
 
 	std::vector<Entry> entries;
+
+	unsigned mHits, mLookups;
 
 public:
 
 	TranspositionTable(size_t initialCapacity = DEFAULT_INITIAL_CAPACITY)
-	: removedCount(0)
+	: mRemovedCount(0), mHits(0), mLookups(0)
 	{
 		clear(initialCapacity);
 	}
 
 	void put(const TValue& value)
 	{
-		if (reservedCount >= capacity >> 1)
+		if (mReservedCount >= mCapacity >> 1)
 			rehash();
 
-		size_t h = (size_t) getid(value) & mask;
+		size_t h = (size_t) mGedId(value) & mMask;
 		size_t d = 1;
 		while (entries[h].flag != EMPTY && entries[h].flag != REMOVED &&
-				getid(entries[h].value) != getid(value))
-			h = (h + d++) & mask;
+				mGedId(entries[h].value) != mGedId(value))
+			h = (h + d++) & mMask;
 		if (entries[h].flag != USED)
-			++reservedCount;
+			++mReservedCount;
 
 		entries[h].flag = 1;
 		entries[h].value = value;
@@ -97,12 +101,20 @@ public:
 
 	const TValue* get(uint64_t id)
 	{
-		size_t h = (size_t) id & mask;
+#ifdef CM_HASHINFO
+		++mLookups;
+#endif
+
+		size_t h = (size_t) id & mMask;
 		size_t d = 1;
 		while (entries[h].flag != EMPTY) {
-			if (entries[h].flag != REMOVED && id == getid(entries[h].value))
+			if (entries[h].flag != REMOVED && id == mGedId(entries[h].value)) {
+#ifdef CM_HASHINFO
+				++mHits;
+#endif
 				return &entries[h].value;
-			h = (h + d++) & mask;
+			}
+			h = (h + d++) & mMask;
 		}
 
 		return nullptr;
@@ -110,59 +122,74 @@ public:
 
 	void clear(size_t initialCapacity = DEFAULT_INITIAL_CAPACITY)
 	{
-		capacity = initialCapacity;
-		if (capacity < 8)
+		mCapacity = initialCapacity;
+		if (mCapacity < 8)
 			throw std::invalid_argument("Initial capacity too small.");
-		mask = capacity - 1;
-		entries = std::vector<Entry > (capacity);
-		reservedCount = 0;
-		removedCount = 0;
+		mMask = mCapacity - 1;
+		entries = std::vector<Entry > (mCapacity);
+		mReservedCount = 0;
+		mRemovedCount = 0;
 	}
 
 	size_t size()
 	{
-		return reservedCount - removedCount;
+		return mReservedCount - mRemovedCount;
 	}
 
 	void remove(uint64_t id)
 	{
-		size_t h = (int) id & mask;
+		size_t h = (int) id & mMask;
 		size_t d = 1;
 		while (entries[h].flag != EMPTY) {
-			if (id == getid(entries[h].value)) {
+			if (id == mGedId(entries[h].value)) {
 				entries[h].flag = REMOVED;
-				++removedCount;
+				++mRemovedCount;
 				return;
 			}
-			h = (h + d++) & mask;
+			h = (h + d++) & mMask;
 		}
+	}
+
+	size_t capacity()
+	{
+		return mCapacity;
+	}
+
+	uint64_t hits()
+	{
+		return mHits;
+	}
+
+	uint64_t lookups()
+	{
+		return mLookups;
 	}
 
 private:
 
 	void rehash()
 	{
-		size_t newCapacity = capacity;
+		size_t newCapacity = mCapacity;
 
-		if (reservedCount - removedCount >= capacity >> 1)
+		if (mReservedCount - mRemovedCount >= mCapacity >> 1)
 			newCapacity *= GROWTH_FACTOR;
 		size_t newMask = newCapacity - 1;
 		std::vector<Entry> newEntries(newCapacity);
 
 		copyEntries(newEntries, newMask);
 
-		capacity = newCapacity;
-		mask = newMask;
+		mCapacity = newCapacity;
+		mMask = newMask;
 		entries = std::move(newEntries);
-		reservedCount -= removedCount;
-		removedCount = 0;
+		mReservedCount -= mRemovedCount;
+		mRemovedCount = 0;
 	}
 
 	void copyEntries(std::vector<Entry>& newEntries, size_t newMask)
 	{
-		for (size_t i = 0; i < capacity; ++i) {
+		for (size_t i = 0; i < mCapacity; ++i) {
 			if (entries[i].flag != EMPTY && entries[i].flag != REMOVED) {
-				size_t h = (size_t) getid(entries[i].value) & newMask;
+				size_t h = (size_t) mGedId(entries[i].value) & newMask;
 				size_t d = 1;
 				while (newEntries[h].flag != EMPTY)
 					h = (h + d++) & newMask;
