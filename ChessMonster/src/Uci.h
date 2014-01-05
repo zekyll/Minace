@@ -92,7 +92,6 @@ private:
 			if (!mAi || !mAi->cmd(line))
 				mLog << "Unknown command" << std::endl;
 		}
-		}
 
 		return true;
 	}
