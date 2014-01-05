@@ -99,6 +99,9 @@ private:
 	// Evaluation score for previous search.
 	int mScore;
 
+	// Moves from sibling nodes that cause beta cutoff.
+	std::vector<std::array<Move, 2>> mKillerMoves;
+
 public:
 
 	MinMaxAI(InfoCallback* infoCallback = nullptr,
@@ -115,7 +118,8 @@ public:
 	mEffectiveBranchingFactor(0.0),
 	mBestMove(),
 	mStopped(ATOMIC_FLAG_INIT),
-	mScore(0)
+	mScore(0),
+	mKillerMoves(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth)
 	{
 	}
 
@@ -327,7 +331,7 @@ private:
 
 		// Create prioritized move list. In normal search goes through all moves; in quiescence
 		// search (depth <= 0) only captures.
-		mMoveLists[mPly].populate(state, depth <= 0);
+		mMoveLists[mPly].populate(state, depth <= 0, mKillerMoves[mPly]);
 
 		// Iterate over all moves in prioritized order.
 		for (unsigned pri = 0; pri < MoveList::PRIORITIES; ++pri) {
@@ -382,10 +386,15 @@ private:
 					std::vector<Move> mvs{move};
 					mInfoCallback->notifyPv(depth, score, mvs);
 				}
-				if (score >= beta)
+				if (score >= beta) {
 					mResults[mPly].nodeType = NodeType::LOWER_BOUND;
-				else
+					if (!move.isCapture() && !move.isPromotion()) {
+						mKillerMoves[mPly][1] = mKillerMoves[mPly][0];
+						mKillerMoves[mPly][0] = move;
+					}
+				} else {
 					mResults[mPly].nodeType = NodeType::EXACT;
+				}
 				alpha = score;
 			}
 		}

@@ -26,8 +26,9 @@ private:
 		TTEST_EQUAL(list.getCount(0), 2U);
 		TTEST_EQUAL(list.getCount(1), 1U);
 		TTEST_EQUAL(list.getCount(2), 4U);
-		TTEST_EQUAL(list.getCount(10), 27U); // Kh7:3 Nh5:2 Qf4:21 b7:0 c5:1
-		TTEST_EQUAL(list.getCount(11), 3U);
+		TTEST_EQUAL(list.getCount(10), 0U);
+		TTEST_EQUAL(list.getCount(11), 27U); // Kh7:3 Nh5:2 Qf4:21 b7:0 c5:1
+		TTEST_EQUAL(list.getCount(12), 3U);
 	}
 
 	MoveList moves[32];
