@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "TimeConstraint.h"
 #include "Scores.h"
+#include "UciLogger.h"
 #include <vector>
 #include <mutex>
 #include <thread>
@@ -22,7 +23,7 @@ private:
 
 	Process mEngine;
 
-	std::ostream* mLog;
+	UciLogger* mLog;
 
 	int mScore;
 
@@ -31,8 +32,7 @@ private:
 public:
 
 	explicit ExternalUciEngine(const std::string& path, const std::vector<std::string>& args
-			= std::vector<std::string>(), std::ostream* log = nullptr,
-			const std::string name = "")
+			= std::vector<std::string>(), UciLogger* log = nullptr, const std::string name = "")
 	: mEngine(path, args), mLog(log), mScore(0), mName(name)
 	{
 		mEngine.in().exceptions(std::ios::badbit | std::ios::failbit);
@@ -96,6 +96,10 @@ public:
 	virtual void quit() override
 	{
 		writeLine("quit");
+		mEngine.out().exceptions(std::ios::badbit); // Don't throw if getline gets eof
+		std::string line;
+		while (readLine(line))
+			;
 		mEngine.wait();
 	};
 
@@ -103,6 +107,12 @@ public:
 	{
 		return mName;
 	}
+
+	virtual bool cmd(const std::string& c) override
+	{
+		writeLine(c);
+		return true;
+	};
 
 	virtual ~ExternalUciEngine()
 	{
@@ -170,15 +180,15 @@ private:
 	{
 		std::getline(mEngine.out(), line);
 		if (mLog)
-			*mLog << "< " << line << std::endl;
+			mLog->onOutput(line);
 		return mEngine.out();
 	}
 
 	void writeLine(const std::string& line)
 	{
-		mEngine.in() << line << std::endl;
 		if (mLog)
-			*mLog << ">>> " << line << std::endl;
+			mLog->onInput(line);
+		mEngine.in() << line << std::endl;
 	}
 };
 

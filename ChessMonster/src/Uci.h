@@ -89,7 +89,9 @@ private:
 		} else if (cmd == "quit") {
 			return false;
 		} else {
-			mLog << "Unknown command" << std::endl;
+			if (!mAi || !mAi->cmd(line))
+				mLog << "Unknown command" << std::endl;
+		}
 		}
 
 		return true;

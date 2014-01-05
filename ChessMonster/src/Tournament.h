@@ -8,8 +8,52 @@
 #include <mutex>
 #include <thread>
 #include <fstream>
+#include <unordered_map>
 
 namespace cm {
+/* Stores UCI traffic and automatically parses debug values from info strings. */
+class EngineLogger : public UciLogger
+{
+private:
+
+	std::stringstream mLines;
+
+	std::unordered_map<std::string, double> mDebugValues;
+
+public:
+
+	virtual void onOutput(const std::string& msg) override
+	{
+		std::stringstream ss;
+		ss << msg;
+		std::string token;
+		ss >> token;
+		if (token == "info" && ss >> token && token == "string"
+				&& ss >> token && token == "debug") {
+			double x;
+			while (ss >> token >> x)
+				mDebugValues[token] = x;
+		}
+		mLines << msg << std::endl;
+	}
+
+	virtual void onInput(const std::string& msg) override
+	{
+		mLines << ">> " << msg << std::endl;
+	}
+
+	void appendToFile(const std::string& filename)
+	{
+		std::ofstream ofs(filename, std::ios_base::out | std::ios_base::app);
+		ofs << mLines.str();
+	}
+
+	double debugValue(const std::string& name) const
+	{
+		auto r = mDebugValues.find(name);
+		return r != mDebugValues.end() ? r->second : 0;
+	}
+};
 
 /*
  * Plays one UCI engine against other engines using random starting positions. Tournament
@@ -25,6 +69,8 @@ private:
 	std::ostream& mOut;
 
 	std::vector<std::string> mExecutableFileNames;
+
+	std::string mOutputDir;
 
 	size_t mThreadCount;
 
@@ -45,10 +91,12 @@ private:
 
 	unsigned mMatchCount;
 
+	bool mLogEngines;
+
 public:
 
 	Tournament(const std::string& tournamentFile, std::ostream& out)
-	: mOut(out), mThreadCount(1), mTime(3.0), mInc(0.1), mMatchCount(50)
+	: mOut(out), mThreadCount(1), mTime(3.0), mInc(0.1), mMatchCount(50), mLogEngines(false)
 	{
 		std::ifstream ifs(tournamentFile);
 		std::string line;
@@ -69,6 +117,10 @@ public:
 				ss >> mInc;
 			} else if (cmd == "matches") {
 				ss >> mMatchCount;
+			} else if (cmd == "outputdir") {
+				ss >> mOutputDir;
+			} else if (cmd == "log_engines") {
+				ss >> mLogEngines;
 			} else if (cmd == "engine") {
 				std::string tmp;
 				ss >> tmp;
@@ -93,8 +145,7 @@ public:
 		}
 		mOut << std::endl;
 
-		mStats.clear();
-		mStats.resize(mExecutableFileNames.size());
+		reset();
 
 		unsigned matchesLeft = (mMatchCount + 1) / 2 * 2;
 		std::vector<std::thread> threads;
@@ -129,6 +180,19 @@ public:
 	}
 
 private:
+
+	void reset()
+	{
+		// Reset stats.
+		mStats.clear();
+		mStats.resize(mExecutableFileNames.size());
+
+		// Clear log files.
+		if (mLogEngines) {
+			for (size_t i = 0; i < mExecutableFileNames.size(); ++i)
+				std::ofstream ofs(mOutputDir + "/E" + std::to_string(i) + ".txt");
+		}
+	}
 
 	void addResult(size_t opponentIdx, double score, size_t threadIdx)
 	{
@@ -173,8 +237,9 @@ private:
 
 	double playMatchPair(size_t opponentIdx)
 	{
-		ExternalUciEngine p1(mExecutableFileNames[0],{}, nullptr, "E0");
-		ExternalUciEngine p2(mExecutableFileNames[opponentIdx],{}, nullptr,
+		EngineLogger elog1, elog2;
+		ExternalUciEngine p1(mExecutableFileNames[0],{}, mLogEngines ? &elog1 : nullptr, "E0");
+		ExternalUciEngine p2(mExecutableFileNames[opponentIdx],{}, mLogEngines ?  &elog2 : nullptr,
 				"E" + std::to_string(opponentIdx));
 
 		GameState state = generateRandomOpening(6);
@@ -191,6 +256,11 @@ private:
 			p2.quit();
 		} catch (std::exception& e) {
 			mOut << "Failed to close " << p2.name() << ": " << e.what() << std::endl;
+		}
+
+		if (mLogEngines) {
+			elog1.appendToFile(mOutputDir + "/E0.txt");
+			elog2.appendToFile(mOutputDir + "/E" + std::to_string(opponentIdx) + ".txt");
 		}
 
 		return score;
@@ -212,6 +282,8 @@ private:
 	virtual void notifyMove(Game& game, unsigned ply, GamePlayer& player,
 			Move move, double time) override
 	{
+//		std::lock_guard<std::mutex> l(mMutex);
+//
 //		mOut << ply / 2 + 1 << ". " << (ply % 2 == 1 ? "... " : "")
 //				<< move.toStr()
 //				<< " " << Scores::toStr(player.getScore())

@@ -33,6 +33,11 @@ public:
 	{
 	};
 
+	virtual bool cmd(const std::string& c)
+	{
+		return false;
+	};
+
 	virtual ~GamePlayer()
 	{
 	}
