@@ -420,7 +420,7 @@ private:
 
 	void setEarlierStates(const GameState& state)
 	{
-		mEarlierStates.clear();
+		mEarlierStates.clear(8196);
 		std::vector<uint64_t> states = state.getEarlierStates();
 		for (uint64_t state : states)
 			mEarlierStates.put(state);
