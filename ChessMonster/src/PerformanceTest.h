@@ -49,7 +49,7 @@ public:
 			mTotalNodes = 0;
 			mTotalEbf = 0;
 
-			MinMaxAI ai(nullptr, mQs * 30, 0);
+			MinMaxAI ai(nullptr, 32 * (1 << 20), mQs * 30, 0);
 			TimeConstraint tc(depth);
 			n = 0;
 			while (totalTime < mLength) {

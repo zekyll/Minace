@@ -53,8 +53,6 @@ private:
 
 	static constexpr unsigned NULL_MOVE_REDUCTION2 = 4;
 
-	static constexpr size_t MAX_TRANSPOSITION_TABLE_SIZE = 1024 * 1024;
-
 	static constexpr unsigned MAX_SEARCH_DEPTH = 30;
 
 	// Don't let clock run lower than this because of timing inaccuracies, random delays etc.
@@ -64,7 +62,7 @@ private:
 
 	TranspositionTable<StateInfo> mTrposTbl;
 
-	TranspositionTable<uint64_t> mEarlierStates;
+	TranspositionTable<uint64_t, false> mEarlierStates;
 
 	TimeConstraint mTimeConstraint;
 
@@ -104,10 +102,11 @@ private:
 
 public:
 
-	MinMaxAI(InfoCallback* infoCallback = nullptr,
+	MinMaxAI(InfoCallback* infoCallback = nullptr, size_t transpositionTableBytes = 32 * (1 << 20),
 			unsigned quiescenceSearchDepth = 30, unsigned treeGenerationDepth = 0)
 	: mQuiescenceSearchDepth(quiescenceSearchDepth),
-	mEarlierStates(512),
+	mTrposTbl(transpositionTableBytes),
+	mEarlierStates(-1, 8196),
 	mInfoCallback(infoCallback),
 	mPly(0),
 	mResults(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth),
@@ -441,7 +440,7 @@ private:
 
 	void addTranspositionTableEntry(int depth, StateInfo& result)
 	{
-		if (depth > 0 && mTrposTbl.size() < MAX_TRANSPOSITION_TABLE_SIZE) {
+		if (depth > 0) {
 			result.depth = depth;
 			mTrposTbl.put(result);
 		}

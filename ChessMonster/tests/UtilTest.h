@@ -25,6 +25,17 @@ private:
 	{
 		TTEST_EQUAL(stringReplace("abc", "", "c"), "abc");
 	}
+
+	TTEST_CASE("roundUpToPowerOfTwo()")
+	{
+		TTEST_EQUAL(roundUpToPowerOfTwo(0), 0);
+		TTEST_EQUAL(roundUpToPowerOfTwo(15), 16);
+		TTEST_EQUAL(roundUpToPowerOfTwo(16), 16);
+		TTEST_EQUAL(roundUpToPowerOfTwo(17), 32);
+		TTEST_EQUAL(roundUpToPowerOfTwo(0x7fffffffffffffff), 0x8000000000000000);
+		TTEST_EQUAL(roundUpToPowerOfTwo(0x8000000000000000), 0x8000000000000000);
+		TTEST_EQUAL(roundUpToPowerOfTwo(0x8000000000000001), 0);
+	}
 };
 
 }

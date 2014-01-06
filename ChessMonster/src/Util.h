@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstring>
+#include <memory>
 
 namespace cm {
 
@@ -50,5 +51,18 @@ inline std::string stringReplace(const std::string& s, const std::string& a, con
 	return r;
 }
 
+/* Rounds value up to nearest power of 2. */
+unsigned long long roundUpToPowerOfTwo(unsigned long long x)
+{
+    x--;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+	x |= x >> 32;
+    x++;
+    return x;
+}
 
 }

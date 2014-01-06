@@ -66,11 +66,12 @@ private:
 		if (cmd == "uci") {
 			mOut << "id name ChessMonster" << std::endl;
 			mOut << "id author Zekyll" << std::endl;
+			mOut << "option name Hash type spin default 32 min 1 max 8192" << std::endl;
 			mOut << "uciok" << std::endl;
 		} else if (cmd == "debug") {
 
 		} else if (cmd == "setoption") {
-
+			setOption(ss);
 		} else if (cmd == "isready") {
 			mOut << "readyok" << std::endl;
 		} else if (cmd == "register") {
@@ -94,6 +95,20 @@ private:
 		}
 
 		return true;
+	}
+
+	void setOption(std::stringstream& ss)
+	{
+		std::string s1, name, s2;
+		ss >> s1 >> name >> s2;
+		if (s1 != "name" || s2 != "value")
+			return;
+		if (name == "Hash") {
+			unsigned value;
+			ss >> value;
+			value = std::max(1u, std::min(value, 8192u));
+			mAi.reset(new MinMaxAI(this, value * (1ull << 20)));
+		}
 	}
 
 	void position(std::stringstream& ss)

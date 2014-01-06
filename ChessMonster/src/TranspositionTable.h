@@ -1,6 +1,7 @@
 #pragma once
 
 #include "StateInfo.h"
+#include "Util.h"
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -34,7 +35,7 @@ public:
 	}
 };
 
-template<typename TValue>
+template<typename TValue, bool tCheckSize = true>
 class TranspositionTable
 {
 private:
@@ -66,9 +67,11 @@ private:
 
 	size_t mRemovedCount = 0;
 
-	size_t mCapacity;
+	size_t mCapacity, mMaxCapacity, mMaxBytes;
 
 	size_t mMask;
+
+	size_t mMaxEntries;
 
 	std::vector<Entry> entries;
 
@@ -76,16 +79,16 @@ private:
 
 public:
 
-	TranspositionTable(size_t initialCapacity = DEFAULT_INITIAL_CAPACITY)
-	: mRemovedCount(0), mHits(0), mLookups(0)
+	TranspositionTable(size_t maxBytes = (size_t)-1, size_t initialBytes = 512)
+	: mRemovedCount(0), mMaxBytes(maxBytes), mHits(0), mLookups(0)
 	{
-		clear(initialCapacity);
+		clear(initialBytes);
 	}
 
 	void put(const TValue& value)
 	{
-		if (mReservedCount >= mCapacity >> 1)
-			rehash();
+		if (tCheckSize && size() == mMaxEntries)
+			return;
 
 		size_t h = (size_t) mGedId(value) & mMask;
 		size_t d = 1;
@@ -97,6 +100,9 @@ public:
 
 		entries[h].flag = 1;
 		entries[h].value = value;
+
+		if (mReservedCount > mCapacity >> 1)
+			rehash();
 	}
 
 	const TValue* get(uint64_t id)
@@ -120,9 +126,12 @@ public:
 		return nullptr;
 	}
 
-	void clear(size_t initialCapacity = DEFAULT_INITIAL_CAPACITY)
+	void clear(size_t initialBytes = 512)
 	{
-		mCapacity = initialCapacity;
+		mMaxCapacity = roundUpToPowerOfTwo(mMaxBytes / sizeof (Entry) + 1) / 2;
+		mMaxEntries = mMaxCapacity / 2; // Load factor < 0.5
+		initialBytes = std::min(initialBytes, mMaxBytes);
+		mCapacity = roundUpToPowerOfTwo(initialBytes / sizeof (Entry) + 1) / 2;
 		if (mCapacity < 8)
 			throw std::invalid_argument("Initial capacity too small.");
 		mMask = mCapacity - 1;
@@ -171,7 +180,7 @@ private:
 	{
 		size_t newCapacity = mCapacity;
 
-		if (mReservedCount - mRemovedCount >= mCapacity >> 1)
+		if (size() > mCapacity >> 1)
 			newCapacity *= GROWTH_FACTOR;
 		size_t newMask = newCapacity - 1;
 		std::vector<Entry> newEntries(newCapacity);
