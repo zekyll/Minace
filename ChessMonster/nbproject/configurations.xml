@@ -37,6 +37,7 @@
       <itemPath>src/Uci.h</itemPath>
       <itemPath>src/UciLogger.h</itemPath>
       <itemPath>src/Util.h</itemPath>
+      <itemPath>src/VarStats.h</itemPath>
       <itemPath>src/Zobrist.h</itemPath>
       <itemPath>src/main.cpp</itemPath>
     </logicalFolder>
@@ -155,6 +156,8 @@
       <item path="src/UciLogger.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Util.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/VarStats.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Zobrist.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -277,6 +280,8 @@
       <item path="src/UciLogger.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Util.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/VarStats.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Zobrist.h" ex="false" tool="3" flavor2="0">
       </item>

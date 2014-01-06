@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "ExternalUciEngine.h"
+#include "VarStats.h"
 #include <ostream>
 #include <vector>
 #include <random>
@@ -78,14 +79,8 @@ private:
 
 	TimeConstraint mTimeConstraint;
 
-	struct MatchStatistics
-	{
-		unsigned n = 0;
-		double sum = 0, sumSqr = 0;
-	};
-
 	// Statistics about games with each player. (Index 0 is for total values.)
-	std::vector<MatchStatistics> mStats;
+	std::vector<VarStats> mMatchStats;
 
 	std::mutex mMutex;
 
@@ -184,8 +179,8 @@ private:
 	void reset()
 	{
 		// Reset stats.
-		mStats.clear();
-		mStats.resize(mExecutableFileNames.size());
+		mMatchStats.clear();
+		mMatchStats.resize(mExecutableFileNames.size());
 
 		// Clear log files.
 		if (mLogEngines) {
@@ -198,15 +193,13 @@ private:
 	{
 		std::lock_guard<std::mutex> l(mMutex);
 
-		mStats[opponentIdx].sum += score;
-		mStats[opponentIdx].sumSqr += score * score;
-		++mStats[opponentIdx].n;
+		mMatchStats[opponentIdx].add(0.5 * score);
 
 		if (opponentIdx > 0) {
 			mOut << "T" << threadIdx << ": E0 vs E" << opponentIdx << ": ";
 			mOut << std::setprecision(1) << std::fixed;
 			mOut << score << "/2" << std::endl;
-		} else if (mStats[opponentIdx].n % PRINT_INTERVAL == 0) {
+		} else if (mMatchStats[opponentIdx].count() % PRINT_INTERVAL == 0) {
 			printStats();
 		}
 	}
@@ -215,21 +208,14 @@ private:
 	{
 		mOut << std::endl;
 		for (size_t i = 0; i < mExecutableFileNames.size(); ++i) {
-			double& sum = mStats[i].sum;
-			double& sumSqr = mStats[i].sumSqr;
-			unsigned& n = mStats[i].n;
-
-			double avg = 0.5 * sum / n;
-			double stdev = 0.5 * sqrt((sumSqr - sum * sum / n) / (n - 1));
-
 			if (i > 0)
 				mOut << "Vs E" << i << ":  ";
 			else
 				mOut << "Total:  ";
 			mOut << std::setprecision(1) << std::fixed;
-			mOut << sum << "/" << (n * 2) << ", "
+			mOut << (2 * mMatchStats[i].sum()) << "/" << (mMatchStats[i].count() * 2) << ", "
 					<< std::setprecision(3)
-					<< "Avg " << avg << " +- " << 2 * stdev / sqrt(n)
+					<< "Avg " << mMatchStats[i].toStr(3)
 					<< std::endl;
 		}
 		mOut << std::endl;
