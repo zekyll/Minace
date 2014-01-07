@@ -214,7 +214,7 @@ private:
 	}
 
 	virtual void notifyIterDone(unsigned depth, int score, uint64_t nodes, size_t hashEntries,
-			size_t hashCapacity, uint64_t hashHits, uint64_t hashLookup) override
+			size_t hashCapacity) override
 	{
 		mOut << "info";
 		mOut << " depth " << depth;
@@ -223,10 +223,7 @@ private:
 		unsigned ms = std::chrono::duration_cast<std::chrono::milliseconds>(t - mStartTime).count();
 		mOut << " time " << ms;
 		mOut << " hashfull " << (unsigned) (1000.0 * hashEntries / hashCapacity);
-		//mOut << " nps " << ?;
 		mOut << std::endl;
-		mOut << "into string " << hashEntries << " " << hashCapacity << " " << hashHits
-				<< " " << hashLookup << std::endl;
 	}
 
 	virtual void notifyString(const std::string& s) override

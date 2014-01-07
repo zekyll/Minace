@@ -9,9 +9,11 @@ struct StateInfo
 {
 public:
 
-	uint64_t id; //TODO make const?
+	uint64_t id;
 
-	int depth;
+	uint8_t depth;
+
+	uint8_t age;
 
 	int score;
 

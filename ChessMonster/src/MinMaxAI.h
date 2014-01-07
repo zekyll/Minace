@@ -29,7 +29,7 @@ public:
 	}
 
 	virtual void notifyIterDone(unsigned depth, int score, uint64_t nodes, size_t hashEntries,
-			size_t hashCapacity, uint64_t hashHits, uint64_t hashLookup)
+			size_t hashCapacity)
 	{
 	}
 
@@ -62,7 +62,7 @@ private:
 
 	TranspositionTable<StateInfo> mTrposTbl;
 
-	TranspositionTable<uint64_t, false> mEarlierStates;
+	HashTable<uint64_t> mEarlierStates;
 
 	TimeConstraint mTimeConstraint;
 
@@ -78,9 +78,7 @@ private:
 
 	uint64_t mTotalNodeCount;
 
-	unsigned mNodeCount; //TODO 64-bit?
-
-	unsigned mTrposTblCutoffs;
+	unsigned mNodeCount, mTrposTblCutoffs; //TODO 64-bit?
 
 	std::vector<MoveList> mMoveLists;
 
@@ -98,7 +96,7 @@ private:
 	int mScore;
 
 	// Moves from sibling nodes that cause beta cutoff.
-	std::vector<std::array<Move, 2>> mKillerMoves;
+	std::vector<std::array<Move, 2 >> mKillerMoves;
 
 public:
 
@@ -106,7 +104,7 @@ public:
 			unsigned quiescenceSearchDepth = 30, unsigned treeGenerationDepth = 0)
 	: mQuiescenceSearchDepth(quiescenceSearchDepth),
 	mTrposTbl(transpositionTableBytes),
-	mEarlierStates(-1, 8196),
+	mEarlierStates(8196),
 	mInfoCallback(infoCallback),
 	mPly(0),
 	mResults(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth),
@@ -128,7 +126,7 @@ public:
 		mEvaluator.reset(state);
 		setEarlierStates(state);
 		mStartTime = std::chrono::high_resolution_clock::now();
-		mTrposTbl.clear();
+		mTrposTbl.startNewSearch();
 		mNodeCount = 0;
 		mEffectiveBranchingFactor = 0.0;
 		mBestMove = Move(); // none
@@ -137,8 +135,6 @@ public:
 		mTotalNodeCount = 0;
 		mScore = 0;
 		setupTimeConstraint(tc, state.activePlayer());
-		//		unsigned lastIterNodeCount = 0, lastIterTrPosTblHitCount = 0, lastIterTrposTblSize = 0;
-		//		double lastIterBranchingFactor = 0.0;
 
 		unsigned maxDepth = std::min((unsigned) MAX_SEARCH_DEPTH,
 				mTimeConstraint.depth ? mTimeConstraint.depth : (unsigned) - 1);
@@ -147,23 +143,12 @@ public:
 			if (!findMove(stateCopy, depth))
 				break;
 
-			//			lastIterNodeCount = mNodeCount;
-			//			lastIterTrPosTblHitCount = mTrposTblHitCount;
-			//			lastIterTrposTblSize = mTrposTbl.size();
-			//			lastIterBranchingFactor = std::pow(mNodeCount, 1.0 / depth);
-
 			// We need depth>=2 or quiescence search to make sure that king is not left in check.
 			if (mQuiescenceSearchDepth > 0 || depth >= 2) {
 				mBestMove = mResults[0].bestMove;
 				mScore = mResults[0].score;
 			}
 		}
-
-		//		log("nodeCount=" + lastIterNodeCount);
-		//		log("trposTblHitCount=" + lastIterTrPosTblHitCount);
-		//		log("trposTblSize=" + lastIterTrposTblSize);
-		//		log(String.format("t=%.3fms", (System.nanoTime() - mStartTime) * 1e-6));
-		//		log(String.format("branchingFactor=%.3g", lastIterBranchingFactor));
 
 		return mBestMove;
 	}
@@ -200,10 +185,11 @@ public:
 				std::stringstream ss;
 				ss << "debug"
 						<< " hashused " << mTrposTbl.size()
+						<< " hashlimit " << mTrposTbl.limit()
 						<< " hashcap " << mTrposTbl.capacity()
-						<< " hashhits " << mTrposTbl.hits()
 						<< " hashcutoffs " << mTrposTblCutoffs
-						<< " hashlookups " << mTrposTbl.lookups();
+						<< " hashlookups " << mTrposTbl.lookups()
+						<< " hashwrites " << mTrposTbl.writes();
 				mInfoCallback->notifyString(ss.str());
 			}
 			return true;
@@ -215,8 +201,6 @@ private:
 
 	bool findMove(GameState& state, int depth)
 	{
-		//log("depth=" + std::to_string(depth));
-
 		unsigned prevNodeCount = mNodeCount;
 		mNodeCount = 0;
 		mPly = 0;
@@ -235,7 +219,7 @@ private:
 
 		if (mInfoCallback) {
 			mInfoCallback->notifyIterDone(depth, mResults[0].score, mTotalNodeCount,
-					mTrposTbl.size(), mTrposTbl.capacity(), 0, 0);
+					mTrposTbl.size(), mTrposTbl.capacity());
 		}
 
 		return true;
@@ -285,7 +269,9 @@ private:
 					|| (info->nodeType == NodeType::UPPER_BOUND && info->score <= alpha)) {
 				mResults[mPly].bestMove = info->bestMove;
 				mResults[mPly].score = info->score;
+#if CM_HASHINFO
 				++mTrposTblCutoffs;
+#endif
 				return info->score;
 			}
 		}
