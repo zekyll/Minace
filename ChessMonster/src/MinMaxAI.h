@@ -10,6 +10,7 @@
 #include "GamePlayer.h"
 #include "GameState.h"
 #include "Move.h"
+#include "Config.h"
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -269,7 +270,7 @@ private:
 					|| (info->nodeType == NodeType::UPPER_BOUND && info->score <= alpha)) {
 				mResults[mPly].bestMove = info->bestMove;
 				mResults[mPly].score = info->score;
-#if CM_HASHINFO
+#if CM_EXTRA_INFO
 				++mTrposTblCutoffs;
 #endif
 				return info->score;

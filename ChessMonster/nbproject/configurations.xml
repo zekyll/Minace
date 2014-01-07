@@ -4,6 +4,7 @@
     <logicalFolder name="src" displayName="src" projectFiles="true">
       <itemPath>src/App.h</itemPath>
       <itemPath>src/BitBoard.h</itemPath>
+      <itemPath>src/Config.h</itemPath>
       <itemPath>src/Epd.h</itemPath>
       <itemPath>src/Evaluator.h</itemPath>
       <itemPath>src/ExternalUciEngine.h</itemPath>
@@ -90,6 +91,8 @@
       <item path="src/App.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/Config.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -214,6 +217,8 @@
       <item path="src/App.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/BitBoard.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/Config.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/Epd.h" ex="false" tool="3" flavor2="0">
       </item>

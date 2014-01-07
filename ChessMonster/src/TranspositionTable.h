@@ -2,11 +2,10 @@
 
 #include "StateInfo.h"
 #include "Util.h"
+#include "Config.h"
 #include <memory>
 #include <stdexcept>
 #include <vector>
-
-#define CM_HASHINFO 0
 
 namespace cm {
 
@@ -60,7 +59,7 @@ public:
 
 	const TValue* get(uint64_t id)
 	{
-#if CM_HASHINFO
+#if CM_EXTRA_INFO
 		++mLookups;
 #endif
 
@@ -280,7 +279,7 @@ public:
 
 	const TValue* get(uint64_t id)
 	{
-#if CM_HASHINFO
+#if CM_EXTRA_INFO
 		++mLookups;
 #endif
 
