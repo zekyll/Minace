@@ -245,9 +245,9 @@ private:
 
 	int search(int depth, int alpha, int beta, GameState& state)
 	{
-		checkTimeLimit();
-
 		++mNodeCount;
+		if ((mNodeCount & 0xfff) == 0)
+			checkTimeLimit();
 
 		// Stalemate on first repetition.
 		if (mEarlierStates.get(state.getId()) && mPly > 0)
@@ -442,14 +442,12 @@ private:
 
 	void checkTimeLimit()
 	{
-		if ((mNodeCount & 0xfff) == 0) {
-			if (mStopped)
-				throw StoppedException();
-			auto dur = std::chrono::high_resolution_clock::now() - mStartTime;
-			double t = std::chrono::duration_cast<std::chrono::microseconds>(dur).count() * 1e-6;
-			if (mTimeConstraint.time != 0 && t > mTimeConstraint.time && mBestMove)
-				throw StoppedException();
-		}
+		if (mStopped)
+			throw StoppedException();
+		auto dur = std::chrono::high_resolution_clock::now() - mStartTime;
+		double t = std::chrono::duration_cast<std::chrono::microseconds>(dur).count() * 1e-6;
+		if (mTimeConstraint.time != 0 && t > mTimeConstraint.time && mBestMove)
+			throw StoppedException();
 	}
 
 	void setupTimeConstraint(const TimeConstraint& tc, Player player)
