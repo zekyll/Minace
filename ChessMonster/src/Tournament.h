@@ -5,7 +5,6 @@
 #include "VarStats.h"
 #include <ostream>
 #include <vector>
-#include <random>
 #include <mutex>
 #include <thread>
 #include <fstream>
@@ -143,22 +142,22 @@ public:
 		reset();
 
 		unsigned matchesLeft = (mMatchCount + 1) / 2 * 2;
+		unsigned matchesPlayed = 0;
 		std::vector<std::thread> threads;
 		for (size_t threadIdx = 0; threadIdx < mThreadCount; ++threadIdx) {
-			threads.emplace_back([this, threadIdx, &matchesLeft] {
-				std::random_device rd;
-				std::mt19937_64 rng(rd());
-				std::uniform_int_distribution<size_t> distr(1, mExecutableFileNames.size() - 1);
+			threads.emplace_back([this, threadIdx, &matchesLeft, &matchesPlayed] {
 
 				for (;;) {
+					size_t opponentIdx;
 					{
 						std::lock_guard<std::mutex> l(mMutex);
 						if (!matchesLeft)
 							break;
 						matchesLeft -= 2;
+						opponentIdx = 1 + matchesPlayed % (mExecutableFileNames.size() - 1);
+						matchesPlayed += 2;
 					}
 
-					size_t opponentIdx = distr(rng);
 					double r = playMatchPair(opponentIdx);
 					addResult(opponentIdx, r, threadIdx);
 					addResult(0, r, threadIdx);
