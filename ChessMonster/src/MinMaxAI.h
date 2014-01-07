@@ -228,6 +228,7 @@ private:
 
 	int createNodeAndSearch(int depth, int alpha, int beta, GameState& state, Move move)
 	{
+#if CM_EXTRA_INFO
 		mTreeGenerator.startNode(alpha, beta, state.activePlayer(), move);
 
 		int score = search(depth, alpha, beta, state);
@@ -237,6 +238,9 @@ private:
 		mTreeGenerator.endNode(score, nodeType);
 
 		return score;
+#else
+		return search(depth, alpha, beta, state);
+#endif
 	}
 
 	int search(int depth, int alpha, int beta, GameState& state)
