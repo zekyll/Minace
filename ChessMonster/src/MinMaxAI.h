@@ -142,6 +142,7 @@ public:
 
 		unsigned maxDepth = std::min((unsigned) MAX_SEARCH_DEPTH,
 				mTimeConstraint.depth ? mTimeConstraint.depth : (unsigned) - 1);
+		maxDepth = std::max(1u + (mQuiescenceSearchDepth == 0), maxDepth);
 		for (int depth = 1; (unsigned) depth <= maxDepth; ++depth) {
 			if (!findMove(stateCopy, depth))
 				break;
@@ -150,7 +151,9 @@ public:
 			//			lastIterTrPosTblHitCount = mTrposTblHitCount;
 			//			lastIterTrposTblSize = mTrposTbl.size();
 			//			lastIterBranchingFactor = std::pow(mNodeCount, 1.0 / depth);
-			if (depth >= 2) {
+
+			// We need depth>=2 or quiescence search to make sure that king is not left in check.
+			if (mQuiescenceSearchDepth > 0 || depth >= 2) {
 				mBestMove = mResults[0].bestMove;
 				mScore = mResults[0].score;
 			}
