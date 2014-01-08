@@ -162,7 +162,7 @@ public:
 		growArrays();
 		mHist[mPly + 1].zobristCode = mHist[mPly].zobristCode;
 		++mPly;
-		mHist[mPly].halfMoveClock = mHist[mPly - 1].halfMoveClock;
+		mHist[mPly].halfMoveClock = mHist[mPly - 1].halfMoveClock + 1;
 		if (mHist[mPly - 1].enPassantSqr)
 			mHist[mPly].zobristCode ^= Zobrist::EN_PASSANT_RND[mHist[mPly - 1].enPassantSqr];
 		mHist[mPly].enPassantSqr = Sqr::NONE;
@@ -296,7 +296,7 @@ public:
 
 	bool isStaleMate()
 	{
-		if (isRepeatedState() || mHist[mPly].halfMoveClock >= 50)
+		if (isRepeatedState() || mHist[mPly].halfMoveClock >= 100)
 			return true;
 		return !hasLegalMoves() && !isKingChecked(mPlayer);
 	}

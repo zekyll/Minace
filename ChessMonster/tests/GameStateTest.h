@@ -256,15 +256,17 @@ private:
 		TTEST_EQUAL(s.isStaleMate(), false);
 	}
 
-	TTEST_CASE("IsStaleMate() returns true when half move clock reaches 50.")
+	TTEST_CASE("IsStaleMate() returns true when half move clock reaches 100.")
 	{
 		GameState s("Ke1 Qa1", "Ke8 Qa8", Player::WHITE);
 		std::vector<std::string> moveCycles[]{
-			{"Qa1-a2", "Qa2-a3", "Qa3-b3", "Qb3-c3", "Qc3-c2", "Qc2-b1", "Qb1-a1"}, // 7
-			{"Qa8-a7", "Qa7-a6", "Qa6-b6", "Qb6-c6", "Qc6-c7", "Qc7-c8", "Qc8-b8", "Qb8-a8"} // 8
+			{"Qa1-a2", "Qa2-a3", "Qa3-a4", "Qa4-b4", "Qb4-b3", "Qb3-c3", "Qc3-c2", "Qc2-b2",
+				"Qb2-b1", "Qb1-a1"}, // 10
+			{"Qa8-a7", "Qa7-a6", "Qa6-a5", "Qa5-b5", "Qb5-c5", "Qc5-b6", "Qb6-c6", "Qc6-c7",
+				"Qc7-b7", "Qb7-b8", "Qb8-a8"} // 11
 		};
-		// 7 * 8 >= 50
-		for (int i = 0; i < 50; ++i) {
+		// 10 * 11 >= 100
+		for (int i = 0; i < 100; ++i) {
 			TTEST_EQUAL(s.isStaleMate(), false);
 			s.makeMove(moveCycles[i % 2][i / 2 % moveCycles[i % 2].size()]);
 		}
