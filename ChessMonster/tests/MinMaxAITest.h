@@ -78,7 +78,7 @@ private:
 	TTEST_CASE("Promotes to rook to avoid stalemate.")
 	{
 		GameState s("Ka7 g7 Qc5", "Kd7 Qd3", Player::WHITE);
-		TTEST_EQUAL(ai->getMove(s, 6).toStr(), "g7-g8R"); // depth 6
+		TTEST_EQUAL(ai->getMove(s, 7).toStr(), "g7-g8R"); // depth 7
 	}
 
 	TTEST_CASE("Can do en passant.")

@@ -209,7 +209,7 @@ private:
 		mEvaluator.reset(state);
 
 		try {
-			createNodeAndSearch(depth, Scores::MIN, Scores::MAX, state, Move());
+			createNodeAndSearch<false>(depth, Scores::MIN, Scores::MAX, state, Move());
 		} catch (StoppedException& e) {
 			return false;
 		}
@@ -226,44 +226,89 @@ private:
 		return true;
 	}
 
+	template<bool tQs>
 	int createNodeAndSearch(int depth, int alpha, int beta, GameState& state, Move move)
 	{
 #if CM_EXTRA_INFO
 		mTreeGenerator.startNode(alpha, beta, state.activePlayer(), move);
+#endif
 
-		int score = search(depth, alpha, beta, state);
+		int score;
+		if (tQs)
+			score = quiescenceSearch(depth, alpha, beta, state);
+		else
+			score = search(depth, alpha, beta, state);
 
+#if CM_EXTRA_INFO
 		//NodeType nodeType = mResults[mPly] != null ? mResults[mPly].nodeType : -1; //TODO;
 		NodeType nodeType = NodeType::NONE;
 		mTreeGenerator.endNode(score, nodeType);
+#endif
 
 		return score;
-#else
-		return search(depth, alpha, beta, state);
-#endif
 	}
 
-	int search(int depth, int alpha, int beta, GameState& state)
+	/* Searches only winning captures. */
+	int quiescenceSearch(int depth, int alpha, int beta, GameState& state)
 	{
-		++mNodeCount;
+		// Check time limit periodically.
 		if ((mNodeCount & 0xfff) == 0)
 			checkTimeLimit();
+		++mNodeCount;
 
 		// Stalemate on first repetition.
 		if (mEarlierStates.get(state.getId()) && mPly > 0)
 			return Scores::DRAW;
 
+		// King "captured".
 		if (mEvaluator.getScore() < -Scores::CHECK_MATE_THRESHOLD) //TODO correct?
 			return mEvaluator.getScore();
 
-		// Quiescence search, when depth <= 0.
-		if (depth <= 0) {
-			int score = mEvaluator.getScore();
-			if ((unsigned) -depth >= mQuiescenceSearchDepth || score >= beta)
-				return score;
-			if (score > alpha)
-				alpha = score;
+		// Stand pat.
+		alpha = std::max(alpha, mEvaluator.getScore());
+		if ((unsigned) -depth >= mQuiescenceSearchDepth || alpha >= beta)
+			return alpha; //TODO beta?
+
+		// Check if we can get cutoff from transposition table. If not then we can still use
+		// the best stored move.
+		const StateInfo* info = mTrposTbl.get(state.getId());
+		if (info && (info->nodeType == NodeType::EXACT
+				|| (info->nodeType == NodeType::LOWER_BOUND && info->score >= beta)
+				|| (info->nodeType == NodeType::UPPER_BOUND && info->score <= alpha))) {
+#if CM_EXTRA_INFO
+			++mTrposTblCutoffs;
+#endif
+			return info->score;
 		}
+		Move bestMove = info && info->bestMove.isCapture() ? info->bestMove : Move();
+
+		// Search captures.
+		alpha = searchMoves<true>(depth, alpha, beta, state, bestMove);
+
+		// Prioritize faster mates.
+		alpha = applyScoreDepthAdjustment(alpha, state);
+
+		return alpha;
+	}
+
+	/* Normal search. */
+	int search(int depth, int alpha, int beta, GameState& state)
+	{
+		if (depth <= 0)
+			return quiescenceSearch(depth, alpha, beta, state);
+
+		// Check time limit periodically.
+		if ((mNodeCount & 0xfff) == 0)
+			checkTimeLimit();
+		++mNodeCount;
+
+		// Stalemate on first repetition.
+		if (mEarlierStates.get(state.getId()) && mPly > 0)
+			return Scores::DRAW;
+
+		// King "captured".
+		if (mEvaluator.getScore() < -Scores::CHECK_MATE_THRESHOLD) //TODO correct?
+			return mEvaluator.getScore();
 
 		// Check if we can get the result from transposition table. If not then we can still used
 		// the best stored move.
@@ -287,18 +332,19 @@ private:
 		mResults[mPly].nodeType = NodeType::UPPER_BOUND;
 		mResults[mPly].score = Scores::MIN;
 		mResults[mPly].bestMove = Move();
+
+		// Save state in order to check repetitions.
 		mEarlierStates.put(state.getId());
 
-		// Search all moves.
+		// Reduce depth if we still get beta cutoff after null move.
 		depth = applyNullMoveReduction(depth, beta, state);
-		searchAllMoves(depth, alpha, beta, state, bestMove);
+
+		// Search all moves.
+		searchMoves<false>(depth, alpha, beta, state, bestMove);
 
 		mEarlierStates.remove(state.getId());
 
-		// If quiescence search did not find any captures, set score to lower bound.
-		if (depth <= 0 && mResults[mPly].score == Scores::MIN)
-			mResults[mPly].score = alpha;
-
+		// Prioritize faster mates.
 		mResults[mPly].score = applyScoreDepthAdjustment(mResults[mPly].score, state);
 
 		// Only insert in transposition table after searching, because same position might be
@@ -308,23 +354,25 @@ private:
 		return mResults[mPly].score;
 	}
 
+	template<bool tQs>
 	int zeroWindowSearch(int depth, int beta, GameState& state, Move move)
 	{
-		return createNodeAndSearch(depth, beta - 1, beta, state, move);
+		return createNodeAndSearch<tQs>(depth, beta - 1, beta, state, move);
 	}
 
-	void searchAllMoves(int depth, int alpha, int beta, GameState& state, Move tpTblMove)
+	template<bool tQs>
+	int searchMoves(int depth, int alpha, int beta, GameState& state, Move tpTblMove)
 	{
 		// If earlier best move was found in transposition table, try it first.
 		if (tpTblMove) {
-			alpha = searchMove(depth, alpha, beta, state, tpTblMove);
+			alpha = std::max(alpha, searchMove<tQs>(depth, alpha, beta, state, tpTblMove));
 			if (alpha >= beta)
-				return;
+				return alpha;
 		}
 
 		// Create prioritized move list. In normal search goes through all moves; in quiescence
-		// search (depth <= 0) only captures.
-		mMoveLists[mPly].populate(state, depth <= 0, mKillerMoves[mPly]);
+		// search only captures.
+		mMoveLists[mPly].populate(state, tQs, mKillerMoves[mPly]);
 
 		// Iterate over all moves in prioritized order.
 		for (unsigned pri = 0; pri < MoveList::PRIORITIES; ++pri) {
@@ -333,17 +381,20 @@ private:
 				Move move = mMoveLists[mPly].getMove(pri, i);
 				if (move == tpTblMove) // Already searched.
 					continue;
-				alpha = searchMove(depth, alpha, beta, state, move);
+				alpha = std::max(alpha, searchMove<tQs>(depth, alpha, beta, state, move));
 				if (alpha >= beta)
-					return;
+					return alpha;
 			}
 		}
 
 		// Stale mate recognition.
-		if (mResults[mPly].score < -Scores::CHECK_MATE_THRESHOLD && state.isStaleMate())
+		if (!tQs && mResults[mPly].score < -Scores::CHECK_MATE_THRESHOLD && state.isStaleMate())
 			mResults[mPly].score = 0;
+
+		return alpha;
 	}
 
+	template<bool tQs>
 	int searchMove(int depth, int alpha, int beta, GameState& state, Move move)
 	{
 		// Make move.
@@ -351,18 +402,23 @@ private:
 		state.makeMove(move);
 		mEvaluator.makeMove(move);
 
-		// Continue search recursively. For PV node a full search is made and zero window search
-		// for others.
+		// Continue search recursively.
 		int score;
-		if (mResults[mPly - 1].nodeType == NodeType::UPPER_BOUND) {
-			// Search normally until value is found in range ]alfa,beta[
-			score = -createNodeAndSearch(depth - 1, -beta, -alpha, state, move);
+		if (!tQs) {
+			// For PV node a full search is made and zero window search for others.
+			if (mResults[mPly - 1].nodeType == NodeType::UPPER_BOUND) {
+				// Search normally until value is found in range ]alfa,beta[
+				score = -createNodeAndSearch<tQs>(depth - 1, -beta, -alpha, state, move);
+			} else {
+				// For rest of the nodes it's only necessary to check that score is at most alpha (or
+				// causes beta-cutoff). If not, then make normal search.
+				score = -zeroWindowSearch<tQs>(depth - 1, -alpha, state, move);
+				if (score > alpha && score < beta)
+					score = -createNodeAndSearch<tQs>(depth - 1, -beta, -alpha, state, move);
+			}
 		} else {
-			// For rest of the nodes it's only necessary to check that score is at most alpha (or
-			// causes beta-cutoff). If not, then make normal search.
-			score = -zeroWindowSearch(depth - 1, -alpha, state, move);
-			if (score > alpha && score < beta)
-				score = -createNodeAndSearch(depth - 1, -beta, -alpha, state, move);
+			// Normal search in Qs
+			score = -createNodeAndSearch<tQs>(depth - 1, -beta, -alpha, state, move);
 		}
 
 		// Undo move.
@@ -371,30 +427,37 @@ private:
 		--mPly;
 
 		// Found better move.
-		if (score > mResults[mPly].score) {
-			mResults[mPly].score = score;
-			mResults[mPly].bestMove = move;
-			if (score > alpha) {
-				if (mPly == 0 && mInfoCallback) {
-					std::vector<Move> mvs{move};
-					mInfoCallback->notifyPv(depth, score, mvs);
-				}
-				if (score >= beta) {
-					mResults[mPly].nodeType = NodeType::LOWER_BOUND;
-					if (!move.isCapture() && !move.isPromotion()) {
-						mKillerMoves[mPly][1] = mKillerMoves[mPly][0];
-						mKillerMoves[mPly][0] = move;
+		if (!tQs) {
+			// In normal search keep track of best score even if it's lower than alpha.
+			if (score > mResults[mPly].score) {
+				mResults[mPly].score = score;
+				mResults[mPly].bestMove = move;
+				if (score > alpha) {
+					if (mPly == 0 && mInfoCallback) {
+						std::vector<Move> mvs{move};
+						mInfoCallback->notifyPv(depth, score, mvs);
 					}
-				} else {
-					mResults[mPly].nodeType = NodeType::EXACT;
+					if (score >= beta) {
+						mResults[mPly].nodeType = NodeType::LOWER_BOUND;
+						if (!move.isCapture() && !move.isPromotion()) {
+							mKillerMoves[mPly][1] = mKillerMoves[mPly][0];
+							mKillerMoves[mPly][0] = move;
+						}
+					} else {
+						mResults[mPly].nodeType = NodeType::EXACT;
+					}
+					alpha = score;
 				}
-				alpha = score;
 			}
+		} else {
+			if (score > alpha)
+				alpha = score;
 		}
 
 		return alpha;
 	}
 
+	/* Reduces depth if beta cutoff can still be achieved with null move search. */
 	int applyNullMoveReduction(int depth, int beta, GameState& state)
 	{
 		if (depth >= (int) (NULL_MOVE_REDUCTION1 + 1)) {
@@ -402,7 +465,7 @@ private:
 			mEvaluator.makeNullMove();
 			++mPly;
 			int zwsDepth = depth - NULL_MOVE_REDUCTION1 - 1;
-			int score = -zeroWindowSearch(zwsDepth, 1 - beta, state, Move());
+			int score = -zeroWindowSearch<false>(zwsDepth, 1 - beta, state, Move());
 			--mPly;
 			mEvaluator.undoMove();
 			state.undoNullMove();
