@@ -524,6 +524,7 @@ private:
 			int moves = mTimeConstraint.clockMovesLeft ? mTimeConstraint.clockMovesLeft : 30;
 			timeSlot += moves * mTimeConstraint.clockIncrement[player];
 			timeSlot /= moves + 1;
+			timeSlot = std::min(timeSlot, mTimeConstraint.clock[player] - CLOCK_SAFETY_MARGIN);
 
 			if (mTimeConstraint.time)
 				mTimeConstraint.time = std::min(mTimeConstraint.time, timeSlot);
