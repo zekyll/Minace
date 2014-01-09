@@ -59,11 +59,14 @@ private:
 	// Don't let clock run lower than this because of timing inaccuracies, random delays etc.
 	static constexpr double CLOCK_SAFETY_MARGIN = 0.1;
 
+	// Size of the hash table for repeated positions.
+	static constexpr unsigned REP_TBL_SIZE = 256;
+
+	static constexpr unsigned REP_TBL_MASK = REP_TBL_SIZE - 1;
+
 	unsigned mQuiescenceSearchDepth;
 
 	TranspositionTable<StateInfo> mTrposTbl;
-
-	HashTable<uint64_t> mEarlierStates;
 
 	TimeConstraint mTimeConstraint;
 
@@ -99,13 +102,17 @@ private:
 	// Moves from sibling nodes that cause beta cutoff.
 	std::vector<std::array<Move, 2 >> mKillerMoves;
 
+	// Simple hash table for doing a quick preliminary check of repeated positions. Each entry
+	// holds the number of positions in that bucket. If zero, it is not necessary to call
+	// GameState::isRepeatedState().
+	uint8_t mRepetitionTable[REP_TBL_SIZE];
+
 public:
 
 	MinMaxAI(InfoCallback* infoCallback = nullptr, size_t transpositionTableBytes = 32 * (1 << 20),
 			unsigned quiescenceSearchDepth = 30, unsigned treeGenerationDepth = 0)
 	: mQuiescenceSearchDepth(quiescenceSearchDepth),
 	mTrposTbl(transpositionTableBytes),
-	mEarlierStates(8196),
 	mInfoCallback(infoCallback),
 	mPly(0),
 	mResults(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth),
@@ -125,7 +132,7 @@ public:
 	{
 		mTree = SearchTreeNode();
 		mEvaluator.reset(state);
-		setEarlierStates(state);
+		initRepetitionTable(state);
 		mStartTime = std::chrono::high_resolution_clock::now();
 		mTrposTbl.startNewSearch();
 		mNodeCount = 0;
@@ -257,7 +264,7 @@ private:
 		++mNodeCount;
 
 		// Stalemate on first repetition.
-		if (mEarlierStates.get(state.getId()) && mPly > 0)
+		if (mRepetitionTable[state.id() & REP_TBL_MASK] && state.isRepeatedState() && mPly > 0)
 			return Scores::DRAW;
 
 		// King "captured".
@@ -271,7 +278,7 @@ private:
 
 		// Check if we can get cutoff from transposition table. If not then we can still use
 		// the best stored move.
-		const StateInfo* info = mTrposTbl.get(state.getId());
+		const StateInfo* info = mTrposTbl.get(state.id());
 		if (info && (info->nodeType == NodeType::EXACT
 				|| (info->nodeType == NodeType::LOWER_BOUND && info->score >= beta)
 				|| (info->nodeType == NodeType::UPPER_BOUND && info->score <= alpha))) {
@@ -303,7 +310,7 @@ private:
 		++mNodeCount;
 
 		// Stalemate on first repetition.
-		if (mEarlierStates.get(state.getId()) && mPly > 0)
+		if (mRepetitionTable[state.id() & REP_TBL_MASK] && state.isRepeatedState() && mPly > 0)
 			return Scores::DRAW;
 
 		// King "captured".
@@ -312,7 +319,7 @@ private:
 
 		// Check if we can get the result from transposition table. If not then we can still used
 		// the best stored move.
-		const StateInfo* info = mTrposTbl.get(state.getId());
+		const StateInfo* info = mTrposTbl.get(state.id());
 		if (info && info->depth >= depth) {
 			if (info->nodeType == NodeType::EXACT
 					|| (info->nodeType == NodeType::LOWER_BOUND && info->score >= beta)
@@ -328,13 +335,13 @@ private:
 		Move bestMove = info && depth > 0 ? info->bestMove : Move();
 
 		// Initialize the result structure.
-		mResults[mPly].id = state.getId();
+		mResults[mPly].id = state.id();
 		mResults[mPly].nodeType = NodeType::UPPER_BOUND;
 		mResults[mPly].score = Scores::MIN;
 		mResults[mPly].bestMove = Move();
 
-		// Save state in order to check repetitions.
-		mEarlierStates.put(state.getId());
+		// Mark state in order to check repetitions.
+		++mRepetitionTable[state.id() & REP_TBL_MASK];
 
 		// Reduce depth if we still get beta cutoff after null move.
 		depth = applyNullMoveReduction(depth, beta, state);
@@ -342,7 +349,7 @@ private:
 		// Search all moves.
 		searchMoves<false>(depth, alpha, beta, state, bestMove);
 
-		mEarlierStates.remove(state.getId());
+		--mRepetitionTable[state.id() & REP_TBL_MASK];
 
 		// Prioritize faster mates.
 		mResults[mPly].score = applyScoreDepthAdjustment(mResults[mPly].score, state);
@@ -475,12 +482,12 @@ private:
 		return depth;
 	}
 
-	void setEarlierStates(const GameState& state)
+	void initRepetitionTable(const GameState& state)
 	{
-		mEarlierStates.clear(8196);
-		std::vector<uint64_t> states = state.getEarlierStates();
-		for (uint64_t state : states)
-			mEarlierStates.put(state);
+		std::fill(std::begin(mRepetitionTable), std::end(mRepetitionTable), 0);
+		unsigned start = state.ply() - std::min(state.halfMoveClock(), state.ply());
+		for (unsigned i = start; i < state.ply(); ++i)
+			++mRepetitionTable[state.id(i) & REP_TBL_MASK];
 	}
 
 	int applyScoreDepthAdjustment(int score, const GameState& state)

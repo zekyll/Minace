@@ -321,9 +321,15 @@ public:
 		return false;
 	}
 
-	uint64_t getId() const
+	uint64_t id() const
 	{
 		return mHist[mPly].zobristCode;
+	}
+
+	uint64_t id(int ply) const
+	{
+		assert(ply >= 0 && ply <= mPly);
+		return mHist[ply].zobristCode;
 	}
 
 	bool operator==(const GameState_t& rhs) const
@@ -339,15 +345,6 @@ public:
 	bool operator!=(const GameState_t& rhs) const
 	{
 		return !(*this == rhs);
-	}
-
-	std::vector<uint64_t> getEarlierStates() const
-	{
-		std::vector<uint64_t> states;
-		states.reserve(mPly);
-		for (unsigned i = 0; i < mPly; ++i)
-			states.push_back(mHist[i].zobristCode);
-		return states;
 	}
 
 	/* Convert game state into FEN string. */
@@ -398,6 +395,18 @@ public:
 		bool legal = !isKingChecked(player);
 		undoMove(move);
 		return legal;
+	}
+
+	bool isRepeatedState() const
+	{
+		// Unlike half move clock the "repetition clock" is also reset by moves that change castling
+		// rights, so this loop may do some extra work (but still works correctly).
+		int start = std::max((int) mPly - (int) mHist[mPly].halfMoveClock, 0);
+		for (int i = mPly - 2; i >= start; i -= 2) {
+			if (mHist[i].zobristCode == mHist[mPly].zobristCode)
+				return true;
+		}
+		return false;
 	}
 
 private:
@@ -535,15 +544,6 @@ private:
 	{
 		if (mPly + 1 >= mHist.size())
 			mHist.resize(2 * mHist.size());
-	}
-
-	bool isRepeatedState() const
-	{
-		for (unsigned i = mPly - mHist[mPly].halfMoveClock; i < mPly; ++i) {
-			if (mHist[i].zobristCode == mHist[mPly].zobristCode)
-				return true;
-		}
-		return false;
 	}
 
 	void updateHalfMoveClock(Move move)
