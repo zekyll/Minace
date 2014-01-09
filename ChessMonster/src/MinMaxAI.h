@@ -267,10 +267,6 @@ private:
 		if (mRepetitionTable[state.id() & REP_TBL_MASK] && state.isRepeatedState() && mPly > 0)
 			return Scores::DRAW;
 
-		// King "captured".
-		if (mEvaluator.getScore() < -Scores::CHECK_MATE_THRESHOLD) //TODO correct?
-			return mEvaluator.getScore();
-
 		// Stand pat.
 		alpha = std::max(alpha, mEvaluator.getScore());
 		if ((unsigned) -depth >= mQuiescenceSearchDepth || alpha >= beta)
@@ -290,7 +286,7 @@ private:
 		Move bestMove = info && info->bestMove.isCapture() ? info->bestMove : Move();
 
 		// Search captures.
-		alpha = searchMoves<true>(depth, alpha, beta, state, bestMove);
+		alpha = searchMoves<true>(depth, alpha, beta, state, bestMove, false /*(ignored)*/);
 
 		// Prioritize faster mates.
 		alpha = applyScoreDepthAdjustment(alpha, state);
@@ -313,9 +309,9 @@ private:
 		if (mRepetitionTable[state.id() & REP_TBL_MASK] && state.isRepeatedState() && mPly > 0)
 			return Scores::DRAW;
 
-		// King "captured".
-		if (mEvaluator.getScore() < -Scores::CHECK_MATE_THRESHOLD) //TODO correct?
-			return mEvaluator.getScore();
+		bool checked = state.isKingChecked(state.activePlayer());
+		if (checked)
+			++depth;
 
 		// Check if we can get the result from transposition table. If not then we can still used
 		// the best stored move.
@@ -344,10 +340,11 @@ private:
 		++mRepetitionTable[state.id() & REP_TBL_MASK];
 
 		// Reduce depth if we still get beta cutoff after null move.
-		depth = applyNullMoveReduction(depth, beta, state);
+		if (!checked)
+			depth = applyNullMoveReduction(depth, beta, state);
 
 		// Search all moves.
-		searchMoves<false>(depth, alpha, beta, state, bestMove);
+		searchMoves<false>(depth, alpha, beta, state, bestMove, checked);
 
 		--mRepetitionTable[state.id() & REP_TBL_MASK];
 
@@ -368,7 +365,7 @@ private:
 	}
 
 	template<bool tQs>
-	int searchMoves(int depth, int alpha, int beta, GameState& state, Move tpTblMove)
+	int searchMoves(int depth, int alpha, int beta, GameState& state, Move tpTblMove, bool checked)
 	{
 		// If earlier best move was found in transposition table, try it first.
 		if (tpTblMove) {
@@ -394,9 +391,9 @@ private:
 			}
 		}
 
-		// Stale mate recognition.
-		if (!tQs && mResults[mPly].score < -Scores::CHECK_MATE_THRESHOLD && state.isStaleMate())
-			mResults[mPly].score = 0;
+		// Check mate & stale mate recognition.
+		if (!tQs && mResults[mPly].score == Scores::MIN)
+			mResults[mPly].score = checked ? -Scores::PIECE_VALUES[Piece::KING] : Scores::DRAW;
 
 		return alpha;
 	}
@@ -406,7 +403,13 @@ private:
 	{
 		// Make move.
 		++mPly;
+		Player pl = state.activePlayer();
 		state.makeMove(move);
+		if (state.isKingChecked(pl)) {
+			state.undoMove(move);
+			--mPly;
+			return Scores::MIN;
+		}
 		mEvaluator.makeMove(move);
 
 		// Continue search recursively.
