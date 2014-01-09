@@ -55,6 +55,8 @@ public:
 	}
 };
 
+#ifdef __unix__
+
 /*
  * Plays one UCI engine against other engines using random starting positions. Tournament
  * parameters are loaded from configuration file. To reduce variance matches are played in pairs
@@ -323,5 +325,7 @@ private:
 		return state;
 	}
 };
+
+#endif
 
 }

@@ -40,9 +40,11 @@ int main(int argc, char** argv)
 		cm::App app;
 		app.run();
 	} else if (mode == 2) {
+#ifdef __unix__
 		// Tournament
 		cm::Tournament tournament(tournamentFile, std::cout);
 		tournament.run();
+#endif
 	}
 
 	return 0;

@@ -12,6 +12,8 @@
 #include <memory>
 #include <cmath>
 
+#ifdef __unix__
+
 namespace cm {
 
 /*
@@ -193,3 +195,5 @@ private:
 };
 
 }
+
+#endif
