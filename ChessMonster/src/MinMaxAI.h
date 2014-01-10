@@ -331,6 +331,8 @@ private:
 #if CM_EXTRA_INFO
 				++mTrposTblCutoffs;
 #endif
+				if (mPly == 0 && mInfoCallback)
+					notifyNewPv(state, info->bestMove, depth, info->score);
 				return info->score;
 			}
 		}
