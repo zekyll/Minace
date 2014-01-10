@@ -443,10 +443,8 @@ private:
 				mResults[mPly].score = score;
 				mResults[mPly].bestMove = move;
 				if (score > alpha) {
-					if (mPly == 0 && mInfoCallback) {
-						std::vector<Move> mvs{move};
-						mInfoCallback->notifyPv(depth, score, mvs);
-					}
+					if (mPly == 0 && mInfoCallback)
+						notifyNewPv(state, move, depth, score);
 					if (score >= beta) {
 						mResults[mPly].nodeType = NodeType::LOWER_BOUND;
 						if (!move.isCapture() && !move.isPromotion()) {
@@ -543,6 +541,32 @@ private:
 		}
 
 		//mInfoCallback->notifyString("Time limit: " + std::to_string(mTimeConstraint.time));
+	}
+
+	/* Find principal variation from tranposition table. Not reliable but better than nothing. */
+	void notifyNewPv(GameState& state, Move firstMove, int depth, int score)
+	{
+		assert(mInfoCallback);
+		assert(firstMove);
+		assert(depth > 0);
+
+		std::vector<Move> pv{firstMove};
+		for (Move move = firstMove;;) {
+			state.makeMove(move);
+			const StateInfo* info = mTrposTbl.get(state.id());
+			if (!info || info->nodeType != NodeType::EXACT)
+				break;
+			if (std::find(pv.begin(), pv.end(), info->bestMove) != pv.end())
+				break;
+			assert(info->bestMove);
+			pv.push_back(info->bestMove);
+			move = info->bestMove;
+		}
+
+		for (auto it = pv.rbegin(); it != pv.rend(); ++it)
+			state.undoMove(*it);
+
+		mInfoCallback->notifyPv(depth, score, pv);
 	}
 };
 
