@@ -319,10 +319,6 @@ private:
 		if (mRepetitionTable[state.id() & REP_TBL_MASK] && state.isRepeatedState() && mPly > 0)
 			return Scores::DRAW;
 
-		bool checked = state.isKingChecked(state.activePlayer());
-		if (checked)
-			++depth;
-
 		// Check if we can get the result from transposition table. If not then we can still used
 		// the best stored move.
 		const StateInfo* info = mTrposTbl.get(state.id());
@@ -339,6 +335,11 @@ private:
 			}
 		}
 		Move bestMove = info ? info->bestMove : Move();
+
+		// Check extension.
+		bool checked = state.isKingChecked(state.activePlayer());
+		if (checked)
+			++depth;
 
 		// Adjust search window due to mate delay penalty.
 		alpha += alpha > Scores::CHECK_MATE_THRESHOLD;
@@ -365,9 +366,9 @@ private:
 		// Delay penalty for mates.
 		mResults[mPly].score -= mResults[mPly].score > Scores::CHECK_MATE_THRESHOLD;
 
-		// Only insert in transposition table after searching, because same position might be
-		// encountered during search.
-		addTranspositionTableEntry(depth, mResults[mPly]);
+		// Only insert in transposition table after searching, because position may be repeated
+		// during search. Stored depth must be the original depth without check extension.
+		addTranspositionTableEntry(depth - checked, mResults[mPly]);
 
 		return mResults[mPly].score;
 	}
