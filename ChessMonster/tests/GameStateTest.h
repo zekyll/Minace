@@ -170,6 +170,22 @@ private:
 		TTEST_EQUAL(s, GameState("Ra1 Ke1 Rh1 Ba8", "Ke8 Rh8", Player::BLACK, Mask({7, 56, 63})));
 	}
 
+	TTEST_CASE("Capturing an unmoved rook with king removes castling rights.")
+	{
+		GameState s("r6r/8/8/8/8/8/6k1/R3K2R b KQ -");
+		s.makeMove("Kg2xRh1");
+		TTEST_EQUAL(s.castlingRights(), Mask({56}));
+		TTEST_EQUAL(s, GameState("r6r/8/8/8/8/8/8/R3K2k w Q -"));
+	}
+
+	TTEST_CASE("Capturing an unmoved rook with unmoved rook removes castling rights.")
+	{
+		GameState s("r3k2r/8/8/8/8/8/8/R3K2R w KQkq -");
+		s.makeMove("Ra1xRa8");
+		TTEST_EQUAL(s.castlingRights(), Mask({7, 63}));
+		TTEST_EQUAL(s, GameState("R3k2r/8/8/8/8/8/8/4K2R b Kk -"));
+	}
+
 	TTEST_CASE("MakeMove changes player.")
 	{
 		GameState s("Kc3 Nd2", "Kf5 d7", Player::WHITE);
@@ -323,6 +339,36 @@ private:
 			s = s0 = GameState("Ke1 Qa6 Ra1 Rh1 Bb3 Bg3 Na4 Nf3 b2 b7 c2 d2 f2 g2 h2",
 					"Kg8 Qd8 Ra8 Rf8 Ba5 Bb5 Nf6 Nh3 a7 a2 b4 c5 d7 e5 g7 h7",
 					Player::BLACK, ~Mask());
+		}
+	}
+
+	TTEST_CASE("Perft in mid game position (depth 1-3).")
+	{
+		// http://chessprogramming.wikispaces.com/Perft+Results (Position 2)
+		GameState s0("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -");
+		GameState s(s0);
+		for (int i = 0; i < 2; ++i) {
+			TTEST_EQUAL(perft(s, 1), 48ull);
+			TTEST_EQUAL(perft(s, 2), 2039ull);
+			TTEST_EQUAL(perft(s, 3), 97862ull);
+//			TTEST_EQUAL(perft(s, 4), 4085603ull);
+//			TTEST_EQUAL(perft(s, 5), 193690690ull);
+			TTEST_EQUAL(s, s0);
+			s = s0 = GameState("r3k2r/pppbbppp/2n2q1P/1P2p3/3pn3/BN2PNP1/P1PPQPB1/R3K2R b KQkq -");
+		}
+	}
+
+	TTEST_CASE("Perft in mid game position (depth 1-3).")
+	{
+		// http://chessprogramming.wikispaces.com/Perft+Results (Position 5)
+		GameState s0("rnbqkb1r/pp1p1ppp/2p5/4P3/2B5/8/PPP1NnPP/RNBQK2R w KQkq - 0 6");
+		GameState s(s0);
+		for (int i = 0; i < 2; ++i) {
+			TTEST_EQUAL(perft(s, 1), 42ull);
+			TTEST_EQUAL(perft(s, 2), 1352ull);
+			TTEST_EQUAL(perft(s, 3), 53392ull);
+			TTEST_EQUAL(s, s0);
+			s = s0 = GameState("rnbqkb1r/pp1p1ppp/2p5/4P3/2B5/8/PPP1NnPP/RNBQK2R w KQkq - 0 6");
 		}
 	}
 

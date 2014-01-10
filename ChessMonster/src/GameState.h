@@ -468,16 +468,17 @@ private:
 		if (move.pieceType() == Piece::KING) {
 			removeCastlingRight(Sqr(56 * ~mPlayer));
 			removeCastlingRight(Sqr(56 * ~mPlayer + 7));
-		} else if (move.pieceType() == Piece::ROOK)
+		} else if (move.pieceType() == Piece::ROOK) {
 			removeCastlingRight(move.fromSqr());
-		else if (move.isCapture())
+		}
+		if (move.isCapture())
 			removeCastlingRight(move.toSqr());
 	}
 
 	void removeCastlingRight(Sqr rookSqr)
 	{
 		Mask sqrBit(rookSqr);
-		if ((mHist[mPly].castlingRights & sqrBit) != 0) {
+		if (mHist[mPly].castlingRights & sqrBit) {
 			mHist[mPly].castlingRights &= ~sqrBit;
 			mHist[mPly].zobristCode ^= Zobrist::CASTLINGRIGHTS_RND[rookSqr];
 		}
@@ -488,6 +489,11 @@ private:
 		Sqr toSqr = move.toSqr();
 		if (move.pieceType() == Piece::KING && ((move.fromSqr() - toSqr) & 3) == 2) {
 			Sqr rookFromSqr, rookToSqr;
+			assert((move.fromSqr() == 4 && move.toSqr() == 2) ||
+					(move.fromSqr() == 4 && move.toSqr() == 6) ||
+					(move.fromSqr() == 60 && move.toSqr() == 58) ||
+					(move.fromSqr() == 60 && move.toSqr() == 62));
+			assert(!move.isCapture() && !move.isPromotion());
 			if (toSqr.col() == 2) {
 				rookFromSqr = Sqr(8 * toSqr.row() + 0);
 				rookToSqr = Sqr(8 * toSqr.row() + 3);
