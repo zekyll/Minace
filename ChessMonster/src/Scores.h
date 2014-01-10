@@ -17,11 +17,9 @@ template<typename TScore>
 class Scores_t
 {
 public:
-	static constexpr TScore MIN = -INT_MAX;
+	static constexpr TScore MIN = -INT_MAX + 10000;
 
 	static constexpr TScore MAX = -MIN;
-
-	static constexpr TScore CHECK_MATE_DEPTH_ADJUSTMENT = 1000 * 100;
 
 	static constexpr TScore CHECK_MATE_THRESHOLD = 1000 * 100;
 
@@ -41,7 +39,7 @@ public:
 	/* Get score for mate in given number of moves. (Negative if player gets mated. ) */
 	static int getCheckMateScore(int moves)
 	{
-		int score = PIECE_VALUES[Piece::KING] - (std::abs(moves) + 1) * CHECK_MATE_DEPTH_ADJUSTMENT;
+		int score = PIECE_VALUES[Piece::KING] - std::abs(moves);
 		return moves >= 0 ? score : -score;
 	}
 
@@ -49,12 +47,10 @@ public:
 	static std::string toStr(int score)
 	{
 		if (score > CHECK_MATE_THRESHOLD) {
-			int moves = std::round((double) (PIECE_VALUES[Piece::KING] - score) /
-					CHECK_MATE_DEPTH_ADJUSTMENT) - 1;
+			int moves = PIECE_VALUES[Piece::KING] - score;
 			return "mate " + std::to_string(moves);
 		} else if (score < -CHECK_MATE_THRESHOLD) {
-			int moves = -(std::round((double) (score + PIECE_VALUES[Piece::KING]) /
-					CHECK_MATE_DEPTH_ADJUSTMENT) - 1);
+			int moves = -(score - (-PIECE_VALUES[Piece::KING]));
 			return "mate " + std::to_string(moves);
 		} else {
 			std::stringstream ss;

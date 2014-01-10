@@ -258,6 +258,9 @@ private:
 	/* Searches only winning captures. */
 	int quiescenceSearch(int depth, int alpha, int beta, GameState& state)
 	{
+		assert(alpha < beta);
+		assert(std::abs(mEvaluator.getScore()) < Scores::CHECK_MATE_THRESHOLD);
+
 		// Check time limit periodically.
 		if ((mNodeCount & 0xfff) == 0)
 			checkTimeLimit();
@@ -266,11 +269,6 @@ private:
 		// Stalemate on first repetition.
 		if (mRepetitionTable[state.id() & REP_TBL_MASK] && state.isRepeatedState() && mPly > 0)
 			return Scores::DRAW;
-
-		// Stand pat.
-		alpha = std::max(alpha, mEvaluator.getScore());
-		if ((unsigned) -depth >= mQuiescenceSearchDepth || alpha >= beta)
-			return alpha; //TODO beta?
 
 		// Check if we can get cutoff from transposition table. If not then we can still use
 		// the best stored move.
@@ -285,11 +283,20 @@ private:
 		}
 		Move bestMove = info && info->bestMove.isCapture() ? info->bestMove : Move();
 
+		// Stand pat.
+		alpha = std::max(alpha, mEvaluator.getScore());
+		if ((unsigned) -depth >= mQuiescenceSearchDepth || alpha >= beta)
+			return alpha; // No need to adjust; stand pat can't have mate score.
+
+		// Adjust search window due to mate delay penalty.
+		alpha += alpha > Scores::CHECK_MATE_THRESHOLD;
+		beta += beta > Scores::CHECK_MATE_THRESHOLD;
+
 		// Search captures.
 		alpha = searchMoves<true>(depth, alpha, beta, state, bestMove, false /*(ignored)*/);
 
-		// Prioritize faster mates.
-		alpha = applyScoreDepthAdjustment(alpha, state);
+		// Delay penalty for mates.
+		alpha -= alpha > Scores::CHECK_MATE_THRESHOLD;
 
 		return alpha;
 	}
@@ -297,6 +304,9 @@ private:
 	/* Normal search. */
 	int search(int depth, int alpha, int beta, GameState& state)
 	{
+		assert(alpha < beta);
+		assert(std::abs(mEvaluator.getScore()) < Scores::CHECK_MATE_THRESHOLD);
+
 		if (depth <= 0)
 			return quiescenceSearch(depth, alpha, beta, state);
 
@@ -305,7 +315,7 @@ private:
 			checkTimeLimit();
 		++mNodeCount;
 
-		// Stalemate on first repetition.
+		// Stalemate on first repetition. (Allow in ply 0 because it is a real game position.)
 		if (mRepetitionTable[state.id() & REP_TBL_MASK] && state.isRepeatedState() && mPly > 0)
 			return Scores::DRAW;
 
@@ -328,7 +338,11 @@ private:
 				return info->score;
 			}
 		}
-		Move bestMove = info && depth > 0 ? info->bestMove : Move();
+		Move bestMove = info ? info->bestMove : Move();
+
+		// Adjust search window due to mate delay penalty.
+		alpha += alpha > Scores::CHECK_MATE_THRESHOLD;
+		beta += beta > Scores::CHECK_MATE_THRESHOLD;
 
 		// Initialize the result structure.
 		mResults[mPly].id = state.id();
@@ -348,8 +362,8 @@ private:
 
 		--mRepetitionTable[state.id() & REP_TBL_MASK];
 
-		// Prioritize faster mates.
-		mResults[mPly].score = applyScoreDepthAdjustment(mResults[mPly].score, state);
+		// Delay penalty for mates.
+		mResults[mPly].score -= mResults[mPly].score > Scores::CHECK_MATE_THRESHOLD;
 
 		// Only insert in transposition table after searching, because same position might be
 		// encountered during search.
@@ -491,18 +505,6 @@ private:
 			++mRepetitionTable[state.id(i) & REP_TBL_MASK];
 	}
 
-	int applyScoreDepthAdjustment(int score, const GameState& state)
-	{
-		if (score > Scores::CHECK_MATE_THRESHOLD)
-			score -= Scores::CHECK_MATE_DEPTH_ADJUSTMENT;
-		//		else {
-		//			int currentScore = getScore(state);
-		//			if (score > currentScore)
-		//				score -= SCORE_DEPTH_ADJUSTMENT;
-		//		}
-		return score;
-	}
-
 	void addTranspositionTableEntry(int depth, StateInfo& result)
 	{
 		if (depth > 0) {
@@ -566,7 +568,7 @@ private:
 		for (auto it = pv.rbegin(); it != pv.rend(); ++it)
 			state.undoMove(*it);
 
-		mInfoCallback->notifyPv(depth, score, pv);
+		mInfoCallback->notifyPv(depth, score - (score > Scores::CHECK_MATE_THRESHOLD), pv);
 	}
 };
 

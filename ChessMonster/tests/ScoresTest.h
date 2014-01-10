@@ -12,6 +12,8 @@ class ScoresTest : public ttest::TestBase
 {
 private:
 
+	static const int MATE = Scores::PIECE_VALUES[Piece::KING];
+
 	TTEST_CASE("Positional values for players are mirrored.")
 	{
 		TTEST_EQUAL(Scores::POSITIONAL_PIECE_VALUES[Player::BLACK][Piece::PAWN][6 * 8 + 3],
@@ -28,8 +30,8 @@ private:
 
 	TTEST_CASE("getCheckMateScore()")
 	{
-		TTEST_EQUAL(Scores::getCheckMateScore(1), 99800000);
-		TTEST_EQUAL(Scores::getCheckMateScore(-3), -99600000);
+		TTEST_EQUAL(Scores::getCheckMateScore(1), MATE - 1);
+		TTEST_EQUAL(Scores::getCheckMateScore(-3), -MATE + 3);
 	}
 
 	TTEST_CASE("Score in floating point form has two decimals.")
@@ -40,10 +42,10 @@ private:
 
 	TTEST_CASE("Mate score has correct string.")
 	{
-		TTEST_EQUAL(Scores::toStr(99760123), "mate 1");
-		TTEST_EQUAL(Scores::toStr(99849999), "mate 1");
-		TTEST_EQUAL(Scores::toStr(-99660123), "mate -2");
-		TTEST_EQUAL(Scores::toStr(-99749999), "mate -2");
+		TTEST_EQUAL(Scores::toStr(MATE - 1), "mate 1");
+		TTEST_EQUAL(Scores::toStr(MATE - 5), "mate 5");
+		TTEST_EQUAL(Scores::toStr(-MATE), "mate 0");
+		TTEST_EQUAL(Scores::toStr(-MATE + 3), "mate -3");
 	}
 };
 

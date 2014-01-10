@@ -53,7 +53,7 @@ private:
 
 	TTEST_CASE("Doesn't stalemate when has material advantage.")
 	{
-		GameState s("Ka8 Kb8", "Kh1", Player::BLACK);
+		GameState s("Ka8 Qb8", "Kh1", Player::BLACK);
 		TTEST_EQUAL("Qb8-g3" == ai->getMove(s, 5).toStr(), false); // depth 5
 	}
 
