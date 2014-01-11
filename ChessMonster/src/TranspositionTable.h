@@ -3,6 +3,7 @@
 #include "StateInfo.h"
 #include "Util.h"
 #include "Config.h"
+#include "Scores.h"
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -48,6 +49,9 @@ public:
 
 	void put(const StateInfo& value)
 	{
+		assert(Scores::isValid(value.score));
+		assert(value.bestMove || value.score == -Scores::MATE || value.score == Scores::DRAW);
+
 		if (++mCurrentWrites > mLimitGrowThreshold)
 			growLimit();
 

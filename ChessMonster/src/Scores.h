@@ -17,16 +17,16 @@ template<typename TScore>
 class Scores_t
 {
 public:
-	static constexpr TScore MIN = -INT_MAX + 10000;
-
-	static constexpr TScore MAX = -MIN;
+	static constexpr TScore INF = INT_MAX - 10000;
 
 	static constexpr TScore CHECK_MATE_THRESHOLD = 1000 * 100;
 
 	static constexpr TScore DRAW = 0;
 
+	static constexpr TScore MATE = 1000000 * 100;
+
 	static constexpr TScore PIECE_VALUES[Piece::COUNT]{
-		1000000 * 100,
+		MATE,
 		9 * 100,
 		5 * 100,
 		3 * 100,
@@ -35,6 +35,18 @@ public:
 	};
 
 	static TScore POSITIONAL_PIECE_VALUES[Player::COUNT][Piece::COUNT][Sqr::COUNT];
+
+	/* Checks that score is not infinite. */
+	static int isValid(int score)
+	{
+		return !isInf(score) && !isInf(-score);
+	}
+
+	/* Checks if score is infinite (may not be exactly INF due to window adjustments). */
+	static int isInf(int score)
+	{
+		return score > INF - 10000;
+	}
 
 	/* Get score for mate in given number of moves. (Negative if player gets mated. ) */
 	static int getCheckMateScore(int moves)

@@ -3,6 +3,7 @@
 #include "NodeType.h"
 #include "Move.h"
 #include "StateInfo.h"
+#include "Scores.h"
 #include <string>
 #include <vector>
 
@@ -128,14 +129,10 @@ private:
 
 	static std::string itostr(int x)
 	{
-		if (x == Scores::MIN)
+		if (Scores::isInf(-x))
 			return "-\u221e";
-		else if (x == Scores::MIN + 1)
-			return "-\u221e+1";
-		else if (x == Scores::MAX)
+		else if (Scores::isInf(x))
 			return "\u221e";
-		else if (x == Scores::MAX - 1)
-			return "\u221e-1";
 		else
 			return std::to_string(x);
 	}

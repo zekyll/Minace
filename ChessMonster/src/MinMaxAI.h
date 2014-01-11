@@ -211,7 +211,7 @@ private:
 		mEvaluator.reset(state);
 
 		try {
-			createNodeAndSearch<false>(depth, Scores::MIN, Scores::MAX, state, Move());
+			createNodeAndSearch<false>(depth, -Scores::INF, Scores::INF, state, Move());
 		} catch (StoppedException& e) {
 			return false;
 		}
@@ -254,6 +254,8 @@ private:
 	int quiescenceSearch(int depth, int alpha, int beta, GameState& state)
 	{
 		assert(alpha < beta);
+		assert(!Scores::isInf(alpha));
+		assert(!Scores::isInf(-beta));
 		assert(std::abs(mEvaluator.getScore()) < Scores::CHECK_MATE_THRESHOLD);
 		assert(mPly > 0);
 
@@ -301,6 +303,8 @@ private:
 	int search(int depth, int alpha, int beta, GameState& state)
 	{
 		assert(alpha < beta);
+		assert(!Scores::isInf(alpha));
+		assert(!Scores::isInf(-beta));
 		assert(std::abs(mEvaluator.getScore()) < Scores::CHECK_MATE_THRESHOLD);
 
 		if (depth <= 0)
@@ -346,7 +350,7 @@ private:
 		// Initialize the result structure.
 		mResults[mPly].id = state.id();
 		mResults[mPly].nodeType = NodeType::UPPER_BOUND;
-		mResults[mPly].score = Scores::MIN;
+		mResults[mPly].score = -Scores::INF;
 		mResults[mPly].bestMove = Move();
 
 		// Mark state in order to check repetitions.
@@ -361,6 +365,10 @@ private:
 
 		--mRepetitionTable[state.id() & REP_TBL_MASK];
 
+		// Check mate & stale mate recognition.
+		if (!mResults[mPly].bestMove)
+			mResults[mPly].score = checked ? -Scores::MATE : Scores::DRAW;
+
 		// Delay penalty for mates.
 		mResults[mPly].score -= mResults[mPly].score > Scores::CHECK_MATE_THRESHOLD;
 
@@ -368,18 +376,27 @@ private:
 		// during search. Stored depth must be the original depth without check extension.
 		addTranspositionTableEntry(depth - checked, mResults[mPly]);
 
+		assert(Scores::isValid(mResults[mPly].score));
+		assert(mResults[mPly].bestMove || mResults[mPly].score == -Scores::MATE ||
+				mResults[mPly].score == Scores::DRAW);
+
 		return mResults[mPly].score;
 	}
 
 	template<bool tQs>
 	int zeroWindowSearch(int depth, int beta, GameState& state, Move move)
 	{
+		assert(Scores::isValid(beta));
 		return createNodeAndSearch<tQs>(depth, beta - 1, beta, state, move);
 	}
 
 	template<bool tQs>
 	int searchMoves(int depth, int alpha, int beta, GameState& state, Move tpTblMove, bool checked)
 	{
+		assert(alpha < beta);
+		assert(!Scores::isInf(alpha));
+		assert(!Scores::isInf(-beta));
+
 		// If earlier best move was found in transposition table, try it first.
 		if (tpTblMove) {
 			alpha = std::max(alpha, searchMove<tQs>(depth, alpha, beta, state, tpTblMove));
@@ -404,16 +421,17 @@ private:
 			}
 		}
 
-		// Check mate & stale mate recognition.
-		if (!tQs && mResults[mPly].score == Scores::MIN)
-			mResults[mPly].score = checked ? -Scores::PIECE_VALUES[Piece::KING] : Scores::DRAW;
-
 		return alpha;
 	}
 
 	template<bool tQs>
 	int searchMove(int depth, int alpha, int beta, GameState& state, Move move)
 	{
+		assert(alpha < beta);
+		assert(!Scores::isInf(alpha));
+		assert(!Scores::isInf(-beta));
+		assert(move);
+
 		// Make move.
 		++mPly;
 		Player pl = state.activePlayer();
@@ -421,7 +439,7 @@ private:
 		if (state.isKingChecked(pl)) {
 			state.undoMove(move);
 			--mPly;
-			return Scores::MIN;
+			return -Scores::INF;
 		}
 		mEvaluator.makeMove(move);
 
@@ -433,8 +451,8 @@ private:
 				// Search normally until value is found in range ]alfa,beta[
 				score = -createNodeAndSearch<tQs>(depth - 1, -beta, -alpha, state, move);
 			} else {
-				// For rest of the nodes it's only necessary to check that score is at most alpha (or
-				// causes beta-cutoff). If not, then make normal search.
+				// For rest of the nodes it's only necessary to check that score is at most alpha
+				// (or causes beta-cutoff). If not, then make normal search.
 				score = -zeroWindowSearch<tQs>(depth - 1, -alpha, state, move);
 				if (score > alpha && score < beta)
 					score = -createNodeAndSearch<tQs>(depth - 1, -beta, -alpha, state, move);
@@ -483,7 +501,7 @@ private:
 	/* Reduces depth if beta cutoff can still be achieved with null move search. */
 	int applyNullMoveReduction(int depth, int beta, GameState& state)
 	{
-		if (depth >= (int) (NULL_MOVE_REDUCTION1 + 1)) {
+		if (depth >= (int) (NULL_MOVE_REDUCTION1 + 1) && !Scores::isInf(beta)) {
 			state.makeNullMove();
 			mEvaluator.makeNullMove();
 			++mPly;
