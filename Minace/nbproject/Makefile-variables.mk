@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux-x86
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux-x86
-CND_ARTIFACT_NAME_Debug=chessmonster
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/chessmonster
+CND_ARTIFACT_NAME_Debug=minace
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/minace
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Debug=chessmonster.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/chessmonster.tar
+CND_PACKAGE_NAME_Debug=minace.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/minace.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux-x86
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux-x86
-CND_ARTIFACT_NAME_Release=chessmonster
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/chessmonster
+CND_ARTIFACT_NAME_Release=minace
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/minace
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Release=chessmonster.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/chessmonster.tar
+CND_PACKAGE_NAME_Release=minace.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/minace.tar
 #
 # include compiler specific variables
 #

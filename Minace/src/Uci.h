@@ -64,8 +64,8 @@ private:
 		ss >> cmd;
 
 		if (cmd == "uci") {
-			mOut << "id name ChessMonster" << std::endl;
-			mOut << "id author Zekyll" << std::endl;
+			mOut << "id name Minace 1.0" << std::endl;
+			mOut << "id author T.A." << std::endl;
 			mOut << "option name Hash type spin default 32 min 1 max 8192" << std::endl;
 			mOut << "uciok" << std::endl;
 		} else if (cmd == "debug") {
