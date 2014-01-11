@@ -54,7 +54,7 @@ private:
 
 	static constexpr unsigned NULL_MOVE_REDUCTION2 = 4;
 
-	static constexpr unsigned MAX_SEARCH_DEPTH = 30;
+	static constexpr unsigned MAX_SEARCH_DEPTH = 100;
 
 	// Don't let clock run lower than this because of timing inaccuracies, random delays etc.
 	static constexpr double CLOCK_SAFETY_MARGIN = 0.1;
@@ -115,16 +115,16 @@ public:
 	mTrposTbl(transpositionTableBytes),
 	mInfoCallback(infoCallback),
 	mPly(0),
-	mResults(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth),
+	mResults(MAX_SEARCH_DEPTH + 1),
 	mTreeGenerator(treeGenerationDepth),
 	mTrposTblCutoffs(0),
-	mMoveLists(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth),
-	mEvaluator(MAX_SEARCH_DEPTH + quiescenceSearchDepth),
+	mMoveLists(MAX_SEARCH_DEPTH + 1),
+	mEvaluator(MAX_SEARCH_DEPTH),
 	mEffectiveBranchingFactor(0.0),
 	mBestMove(),
 	mStopped(ATOMIC_FLAG_INIT),
 	mScore(0),
-	mKillerMoves(MAX_SEARCH_DEPTH + 1 + quiescenceSearchDepth)
+	mKillerMoves(MAX_SEARCH_DEPTH + 1)
 	{
 	}
 
@@ -283,7 +283,8 @@ private:
 
 		// Stand pat.
 		alpha = std::max(alpha, mEvaluator.getScore());
-		if ((unsigned) -depth >= mQuiescenceSearchDepth || alpha >= beta)
+		if (alpha >= beta || mPly >= MAX_SEARCH_DEPTH ||
+				(unsigned) -depth >= mQuiescenceSearchDepth)
 			return alpha; // No need to adjust; stand pat can't have mate score.
 
 		// Adjust search window due to mate delay penalty.
@@ -318,6 +319,9 @@ private:
 		// Stalemate on first repetition. (Allow in ply 0 because it is a real game position.)
 		if (mRepetitionTable[state.id() & REP_TBL_MASK] && state.isRepeatedState() && mPly > 0)
 			return Scores::DRAW;
+
+		if (mPly >= MAX_SEARCH_DEPTH)
+			return mEvaluator.getScore();
 
 		// Check if we can get the result from transposition table. If not then we can still used
 		// the best stored move.
