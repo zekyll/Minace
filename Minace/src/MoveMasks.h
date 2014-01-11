@@ -6,7 +6,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace cm {
+namespace mnc {
 
 template<typename TMask>
 class MoveMasks_t

@@ -6,7 +6,7 @@
 #include "Player.h"
 #include <string>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Parses an Extended Position Description from string. Currently only supports the initial data

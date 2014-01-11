@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cm {
+namespace mnc {
 
 enum class NodeType : unsigned
 {

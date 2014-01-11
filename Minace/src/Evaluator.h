@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "GameState.h"
 
-namespace cm {
+namespace mnc {
 
 /**
  * Keeps track of score (aka static evaluation) for the game state. The score is updated

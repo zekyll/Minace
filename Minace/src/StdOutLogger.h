@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Simple logger that outputs to standard output.

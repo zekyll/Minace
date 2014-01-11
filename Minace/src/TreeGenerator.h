@@ -5,7 +5,7 @@
 #include "NodeType.h"
 #include "SearchTreeNode.h"
 
-namespace cm {
+namespace mnc {
 
 /**
  * Saves first few levels of the search tree for debugging purposes etc.

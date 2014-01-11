@@ -11,7 +11,7 @@
 #include <thread>
 #include <chrono>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Implementation of Universal Chess Interface.

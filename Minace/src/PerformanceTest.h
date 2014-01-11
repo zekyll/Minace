@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <cmath>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Tests performance of the MinMaxAI in randomly generated positions with different search depths.

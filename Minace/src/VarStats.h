@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace cm {
+namespace mnc {
 
 class VarStats
 {

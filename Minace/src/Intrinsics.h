@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cm {
+namespace mnc {
 
 inline unsigned bitCount(unsigned long long x)
 {

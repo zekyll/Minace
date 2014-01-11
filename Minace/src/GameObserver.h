@@ -4,7 +4,7 @@
 #include "Move.h"
 #include "Player.h"
 
-namespace cm {
+namespace mnc {
 
 class Game;
 

@@ -10,7 +10,7 @@
 #include <fstream>
 #include <unordered_map>
 
-namespace cm {
+namespace mnc {
 /* Stores UCI traffic and automatically parses debug values from info strings. */
 class EngineLogger : public UciLogger
 {

@@ -3,7 +3,7 @@
 #include "NodeType.h"
 #include "Move.h"
 
-namespace cm {
+namespace mnc {
 
 struct StateInfo
 {

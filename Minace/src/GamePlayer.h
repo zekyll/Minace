@@ -3,7 +3,7 @@
 #include "GameState.h"
 #include "Move.h"
 
-namespace cm {
+namespace mnc {
 
 class GamePlayer
 {

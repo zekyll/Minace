@@ -7,7 +7,7 @@
 #include <memory>
 
 // Explicit instantiation for classes that have static initialization code.
-namespace cm {
+namespace mnc {
 template class Scores_t<int>;
 template class MoveMasks_t<Mask>;
 template class Zobrist_t<uint64_t>;
@@ -33,16 +33,16 @@ int main(int argc, char** argv)
 
 	if (mode == 0) {
 		// UCI mode
-		cm::Uci uci(std::cin, std::cout, *log);
+		mnc::Uci uci(std::cin, std::cout, *log);
 		uci.run();
 	} else if (mode == 1) {
 		// Testing mode
-		cm::App app;
+		mnc::App app;
 		app.run();
 	} else if (mode == 2) {
 #ifdef __unix__
 		// Tournament
-		cm::Tournament tournament(tournamentFile, std::cout);
+		mnc::Tournament tournament(tournamentFile, std::cout);
 		tournament.run();
 #endif
 	}

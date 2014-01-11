@@ -6,7 +6,7 @@
 #include <cstddef>
 #include <memory>
 
-namespace cm {
+namespace mnc {
 
 class TreeGeneratorTest : public ttest::TestBase
 {

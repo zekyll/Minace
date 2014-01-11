@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <iterator>
 
-namespace cm {
+namespace mnc {
 
 template<typename T>
 class Piece_t

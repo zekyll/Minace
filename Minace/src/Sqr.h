@@ -3,7 +3,7 @@
 #include <string>
 #include <stdexcept>
 
-namespace cm {
+namespace mnc {
 
 template<typename T>
 class Sqr_t

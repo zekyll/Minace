@@ -14,7 +14,7 @@
 
 #ifdef __unix__
 
-namespace cm {
+namespace mnc {
 
 /*
  * Allows basic interaction with an external chess engine that uses UCI protocol.

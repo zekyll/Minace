@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Stores information about a search tree node. Does not affect the behavior of the search

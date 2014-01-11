@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace cm {
+namespace mnc {
 
 /* Observes UCI traffic. */
 class UciLogger

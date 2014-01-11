@@ -21,7 +21,7 @@
 #include "../tests/ProcessTest.h"
 #include <iostream>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Implementation of the command line interface.

@@ -7,7 +7,7 @@
 #include <array>
 #include <cstdint>
 
-namespace cm {
+namespace mnc {
 
 template<typename T>
 class Zobrist_t

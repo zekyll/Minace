@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace cm {
+namespace mnc {
 
 /* Transposition table consisting of buckets with 2 slots in each bucket. 1st slot is only replaced
  * if new entry has greater depth. Each entry has age, and entries from previous searches are

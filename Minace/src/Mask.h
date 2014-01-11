@@ -6,7 +6,7 @@
 #include <utility>
 #include <iosfwd>
 
-namespace cm {
+namespace mnc {
 
 template<typename T>
 class Mask_t

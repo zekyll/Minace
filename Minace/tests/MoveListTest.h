@@ -6,7 +6,7 @@
 #include <memory>
 #include <cstddef>
 
-namespace cm {
+namespace mnc {
 
 class MoveListTest : public ttest::TestBase
 {

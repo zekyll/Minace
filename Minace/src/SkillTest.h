@@ -9,7 +9,7 @@
 #include <string>
 #include <initializer_list>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Allows testing the skill level of an AI by using a set of positions where the best move is known.

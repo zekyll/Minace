@@ -3,7 +3,7 @@
 #include "GameState.h"
 #include <array>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Manages a list of pseudo-legal moves in specific game state. The list is divided in multiple

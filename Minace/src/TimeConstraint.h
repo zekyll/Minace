@@ -3,7 +3,7 @@
 
 #pragma once
 
-namespace cm {
+namespace mnc {
 
 /**
  * Structure for holding the parameters that control the length and depth of search. There are 4

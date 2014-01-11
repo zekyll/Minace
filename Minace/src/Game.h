@@ -8,7 +8,7 @@
 #include <vector>
 #include <chrono>
 
-namespace cm {
+namespace mnc {
 
 enum class GameResultType
 {

@@ -13,7 +13,7 @@
 #include <array>
 #include <iosfwd>
 
-namespace cm {
+namespace mnc {
 
 class BitBoard
 {

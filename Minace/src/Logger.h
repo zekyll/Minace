@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Abstract logger interface.

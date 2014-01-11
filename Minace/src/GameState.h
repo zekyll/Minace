@@ -12,7 +12,7 @@
 #include <iosfwd>
 #include <cstdint>
 
-namespace cm {
+namespace mnc {
 
 template<typename T>
 class GameState_t

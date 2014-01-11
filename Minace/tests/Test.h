@@ -4,7 +4,7 @@
 #include "../src/GameState.h"
 #include "../ttest/ttest.h"
 
-namespace cm {
+namespace mnc {
 
 class Test : public ttest::TestBase
 {

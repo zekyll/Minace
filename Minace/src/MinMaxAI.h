@@ -19,7 +19,7 @@
 #include <cmath>
 #include <atomic>
 
-namespace cm {
+namespace mnc {
 
 class InfoCallback
 {

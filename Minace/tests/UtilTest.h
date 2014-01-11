@@ -4,7 +4,7 @@
 #include "../ttest/ttest.h"
 #include <cmath>
 
-namespace cm {
+namespace mnc {
 
 class UtilTest : public ttest::TestBase
 {

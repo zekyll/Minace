@@ -4,7 +4,7 @@
 #include <cstring>
 #include <memory>
 
-namespace cm {
+namespace mnc {
 
 template<typename ...TArgs>
 std::string strFormat(size_t len, const char* fmt, TArgs ...args)

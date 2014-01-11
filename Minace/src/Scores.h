@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <cmath>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Constants used for static evaluation of game states.

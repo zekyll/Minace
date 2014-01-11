@@ -4,7 +4,7 @@
 #include "../ttest/ttest.h"
 #include <string>
 
-namespace cm {
+namespace mnc {
 
 class PstreamTest : public ttest::TestBase
 {

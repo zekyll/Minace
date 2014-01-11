@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace cm {
+namespace mnc {
 
 template<typename T>
 class Player_t

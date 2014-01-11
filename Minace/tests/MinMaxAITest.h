@@ -6,7 +6,7 @@
 #include <memory>
 #include <cstddef>
 
-namespace cm {
+namespace mnc {
 
 class MinMaxAITest : public ttest::TestBase
 {

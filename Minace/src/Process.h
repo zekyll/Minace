@@ -18,7 +18,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-namespace cm {
+namespace mnc {
 
 /*
  * Reads at least 1 byte. Returns the number bytes read, 0 on EOF and -1 on error.

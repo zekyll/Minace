@@ -7,7 +7,7 @@
 #include <random>
 #include <cstdint>
 
-namespace cm {
+namespace mnc {
 
 /**
  * Generates a game state from 64-bit seed according to the following rules:

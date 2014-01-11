@@ -6,7 +6,7 @@
 #include <memory>
 #include <cstdint>
 
-namespace cm {
+namespace mnc {
 
 class GameStateTest : public ttest::TestBase
 {

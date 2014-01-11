@@ -4,7 +4,7 @@
 #include "../src/Epd.h"
 #include "../ttest/ttest.h"
 
-namespace cm {
+namespace mnc {
 
 class EpdTest : public ttest::TestBase
 {

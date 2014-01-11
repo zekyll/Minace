@@ -9,7 +9,7 @@
 #include <cctype>
 #include <cstdint>
 
-namespace cm {
+namespace mnc {
 
 class Move
 {
