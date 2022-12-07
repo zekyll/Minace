@@ -3,6 +3,7 @@
 #include <string>
 #include <cstring>
 #include <memory>
+#include <cmath>
 
 namespace mnc {
 
